@@ -48,13 +48,19 @@ export const usePatients = () => {
   });
 };
 
+//----------------------------------------------
+
 const Patient: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string | undefined>
   >({});
 
+  const [isCreateMode, setIsCreateMode] = useState(false); // State to track create mode
+  const [editingRowId, setEditingRowId] = useState<string | null>(null); // State to track editing row
+
   const { data: doctors } = useGetDoctors();
   const { data: diseases } = useGetDiseases();
+  
   //-----------------------------------------------
 
   //----------------------------------------------
@@ -103,17 +109,19 @@ const Patient: React.FC = () => {
             <ul>
               {(patient.diseases as IDisease[]).map((disease) => (
                 <li key={disease._id}>
-                  {disease.name}: {disease.description}
+                  {disease.name}
+                  {/* : {disease.description} */}
                 </li>
               ))}
             </ul>
           );
         },
 
-        Edit: ({ cell, row }) => {
-          const selectedDiseases = (cell.getValue() as IDisease[]) || [];
+        Edit: ({ cell, row, table }) => {
+          const selectedDiseases = (cell.getValue() as IDisease[]) || []; //to avoid undefined problem
           return (
             <MultiSelect
+              label="Diseases"
               data={(diseases || []).map((disease) => ({
                 value: disease._id,
                 label: disease.name,
@@ -123,7 +131,12 @@ const Patient: React.FC = () => {
                 const selectedDiseases = selectedIds.map((id) =>
                   diseases?.find((disease) => disease._id === id)
                 );
+                
                 row._valuesCache.diseases = selectedDiseases;
+                
+                
+
+                //table.setEditingRow({ ...row }); // Trigger a re-render
               }}
             />
           );
@@ -146,10 +159,11 @@ const Patient: React.FC = () => {
           );
         },
 
-        Edit: ({ cell, row }) => {
+        Edit: ({ cell, row, table }) => {
           const selectedDoctors = (cell.getValue() as IDoctor[]) || [];
           return (
             <MultiSelect
+              label="Doctors"
               data={(doctors || []).map((doctor) => ({
                 value: doctor._id,
                 label: doctor.name,
@@ -160,6 +174,7 @@ const Patient: React.FC = () => {
                   doctors?.find((doctor) => doctor._id === id)
                 );
                 row._valuesCache.doctors = selectedDoctors;
+                // table.setEditingRow({ ...row }); // Trigger a re-render
               }}
             />
           );
@@ -384,6 +399,8 @@ function useCreatePatient() {
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
     onSuccess: () => {
       console.log("Success");
+      
+
     },
     onError: () => {
       console.log("Error creating patient");
@@ -394,6 +411,8 @@ function useCreatePatient() {
 // READ hook (get patients from api)
 
 //import useGetPatients ,{fetchPatients} from "../api/get-all-patients";
+import { updateDoctor } from '../../../../../EMR_Backend/src/services/doctor.service';
+import { updateDisease } from '../../../../../EMR_Backend/src/controllers/DiseaseController';
 /* function useGetPatients() {
   return useQuery<IPatient[]>({
     queryKey: ['patients'],
@@ -458,16 +477,16 @@ function useDeletePatient() {
   });
 }
 
-const queryClient = new QueryClient();
 const PatientWithProviders = () => (
-  <QueryClientProvider client={queryClient}>
-    <ModalsProvider>
-      <Patient />
-    </ModalsProvider>
-  </QueryClientProvider>
+  <ModalsProvider>
+    <Patient />
+  </ModalsProvider>
 );
 
+//export default Patient;
 export default PatientWithProviders;
+
+//----------------------------------------------
 
 const validateRequired = (value: string) => !!value.length;
 const validatePatient = (patient: IPatient) => {
@@ -478,3 +497,5 @@ const validatePatient = (patient: IPatient) => {
     age: !patient.age ? "Age is Required" : "",
   };
 };
+
+//-------------------
