@@ -1,0 +1,447 @@
+{
+	"info": {
+		"_postman_id": "6dac8918-5a1e-4072-91ce-4f29bd2b7f85",
+		"name": "Turing_Node_React_7Batch",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32177347"
+	},
+	"item": [
+		{
+			"name": "todos",
+			"item": [
+				{
+					"name": "GetAllTodos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/todos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateTodo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\" : \"Todo 4\",\r\n    \"completed\" :true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/todos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTodo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/todos/661eaf09759f585a31e4f5a5s",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"todos",
+								"661eaf09759f585a31e4f5a5s"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTodo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Todo 4 Updated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/todos/661f338a090849b7451b4ed5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"todos",
+								"661f338a090849b7451b4ed5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTodo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/todos/661f907dd3de00a61f3f03aa",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"todos",
+								"661f907dd3de00a61f3f03aa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "movies",
+			"item": [
+				{
+					"name": "GetAllMovies",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MjI0YzFiMGNjODg0ZmZmNTQxNzQyYSIsImlhdCI6MTcxMzUyMzczOX0.fplwTDlqFghI6s4ott-eOr55lxyMZfXiEabUHsf7DhQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/movies",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"movies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateMovie",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\" : \"Avata 2\",\r\n    \"director\": {\r\n        \"name\" :\"Jame Cameron\",\r\n        \"phoneNo\":\"0988877797\"\r\n    },\r\n    \"year\":2020\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/movies",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"movies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMovie",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/movies/661fa75ba6ba2485cc21f9bd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"movies",
+								"661fa75ba6ba2485cc21f9bd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMovieByTItle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/movies/title/Avata",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"movies",
+								"title",
+								"Avata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateMovie",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Todo 4 Updated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/movies/661f338a090849b7451b4ed5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"movies",
+								"661f338a090849b7451b4ed5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteMovie",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/movies/661f907dd3de00a61f3f03aa",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"movies",
+								"661f907dd3de00a61f3f03aa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reviews",
+			"item": [
+				{
+					"name": "GetAllReviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/reviews",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateReview",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"movie\":\"661fa84aa6ba2485cc21f9c1\",\r\n    \"rating\":3,\r\n    \"review\":\"very good movie\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/reviews",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getReviewById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/reviews/661ff9cf7225a326b2e260d0",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"661ff9cf7225a326b2e260d0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getReviewByMovie",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/reviews/661ff9cf7225a326b2e260d0",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"661ff9cf7225a326b2e260d0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateReview",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"movie\":\"dsddds\",\r\n    \"rating\":4,\r\n    \"review\":\"The Best Movie\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/reviews/661ffb6751fd48f12d160abe",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"661ffb6751fd48f12d160abe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteReview",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/reviews/66213bf6cca23f46782a144f",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"66213bf6cca23f46782a144f"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
