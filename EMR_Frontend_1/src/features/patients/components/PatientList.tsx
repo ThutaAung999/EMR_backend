@@ -74,14 +74,113 @@ export const PatientList: React.FC = () => {
         <td>{patient.age}</td>
         <td>{patientDiseases.map(disease => disease.name).join(", ")}</td>
         <td>{patientDoctors.map(doctor => doctor.name).join(", ")}</td>
-        <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-          <Button className="text-white bg-red-600" onClick={() => handleDelete(patient._id)}>
+        <td style={{ width: "10px", whiteSpace: "nowrap" }} >
+          <Button className="text-white bg-red-600 " onClick={() => handleDelete(patient._id)}>
             Delete
+          </Button>
+          <Button className="text-white bg-blue-500 mx-6 " onClick={() => handleDelete(patient._id)}>
+            Edit
           </Button>
         </td>
       </tr>
     );
   }) || [];
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+
+    // Show "First" button
+    if (totalPages > 1) {
+      buttons.push(
+        <Button onClick={() => setPage(1)} disabled={active === 1} key="first">
+          First
+        </Button>
+      );
+    }
+
+    // Show "Previous" button
+    buttons.push(
+      <Button onClick={previous} disabled={active === 1} key="previous">
+        <span>{`<<`}</span>
+      </Button>
+    );
+
+    // Show page numbers with ellipsis
+    if (totalPages <= 5) {
+      for (let page = 1; page <= totalPages; page++) {
+        buttons.push(
+          <Button
+            key={page}
+            onClick={() => setPage(page)}
+            variant={page === active ? "filled" : "outline"}
+          >
+            {page}
+          </Button>
+        );
+      }
+    } else {
+      buttons.push(
+        <Button
+          key={1}
+          onClick={() => setPage(1)}
+          variant={1 === active ? "filled" : "outline"}
+        >
+          1
+        </Button>
+      );
+
+      if (active > 3) {
+        buttons.push(<span className="text-blue-600 " key="left-ellipsis">. . . </span>);
+      }
+
+      const startPage = Math.max(2, active - 1);
+      const endPage = Math.min(totalPages - 1, active + 1);
+
+      for (let page = startPage; page <= endPage; page++) {
+        buttons.push(
+          <Button
+            key={page}
+            onClick={() => setPage(page)}
+            variant={page === active ? "filled" : "outline"}
+          >
+            {page}
+          </Button>
+        );
+      }
+
+      if (active < totalPages - 2) {
+        buttons.push(<span className="text-blue-600 " key="right-ellipsis">. . .</span>);
+      }
+
+      buttons.push(
+        <Button
+          key={totalPages}
+          onClick={() => setPage(totalPages)}
+          variant={totalPages === active ? "filled" : "outline"}
+        >
+          {totalPages}
+        </Button>
+      );
+    }
+
+    // Show "Next" button
+    buttons.push(
+      <Button onClick={next} disabled={active === totalPages} key="next">
+        <span>{`>>`}</span>
+      </Button>
+    );
+
+    // Show "Last" button
+    if (totalPages > 1) {
+      buttons.push(
+        <Button onClick={() => setPage(totalPages)} disabled={active === totalPages} key="last">
+          Last
+        </Button>
+      );
+    }
+
+    return buttons;
+  };
 
   return (
     <>
@@ -100,21 +199,7 @@ export const PatientList: React.FC = () => {
           <tbody>{rows}</tbody>
         </Table>
         <Group position="center" mt="md">
-          <Button onClick={previous} disabled={active === 1}>
-            Previous
-          </Button>
-          {range.map((page) => (
-            <Button
-              key={page}
-              onClick={() => setPage(page)}
-              variant={page === active ? "filled" : "outline"}
-            >
-              {page}
-            </Button>
-          ))}
-          <Button onClick={next} disabled={active === totalPages}>
-            Next
-          </Button>
+          {renderPaginationButtons()}
         </Group>
         <ConfirmDialog open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={handleConfirmDelete} />
       </div>

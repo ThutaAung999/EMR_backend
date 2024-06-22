@@ -12,7 +12,7 @@ export const fetchDiseases = async () => {
   };
   
   export const useGetDiseases = () => {
-    return useQuery<IPatient[], Error>({
+    return useQuery<IDisease[], Error>({
         queryKey: ['diseases'],
         queryFn: fetchDiseases,
         refetchOnWindowFocus: false,

@@ -13,7 +13,7 @@ export const fetchDoctors = async () => {
   
   
   export const useGetDoctors = () => {
-    return useQuery<IPatient[], Error>({
+    return useQuery<IDoctor[], Error>({
         queryKey: ['doctors'],
         queryFn: fetchDoctors,
         refetchOnWindowFocus: false,

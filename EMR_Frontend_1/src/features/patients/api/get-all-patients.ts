@@ -21,3 +21,4 @@ const useGetPatients = () => {
 };
 
 export default useGetPatients
+
