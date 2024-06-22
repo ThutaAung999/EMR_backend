@@ -1,19 +1,5 @@
 import React, { useMemo, useState } from "react";
 
-//import { useCreatePatient } from "../api/create-patient";
-
-import useGetPatients, { fetchPatients } from "../api/get-all-patients";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-
-import { IPatient } from "../model/IPatient";
-import { IDoctor } from "../../doctors/model/IDoctor";
-import { IDisease } from "../../diseases/model/IDisease";
 
 import {
   MRT_EditActionButtons,
@@ -38,16 +24,19 @@ import {
 
 import { ModalsProvider, modals } from "@mantine/modals";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
+
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
+import { useCreatePatient } from "../api/create-patient";
+import { useDeletePatient } from "../api/delete-patients";
+import { useUpdatePatient } from "../api/update-patient";
 
-export const usePatients = () => {
-  return useQuery<IPatient[], Error>({
-    queryKey: ["patients"],
-    queryFn: fetchPatients,
-  });
-};
+import useGetPatients from "../api/get-all-patients";
 
+import { IPatient } from "../model/IPatient";
+import { IDoctor } from "../../doctors/model/IDoctor";
+import { IDisease } from "../../diseases/model/IDisease";
+  
 //----------------------------------------------
 
 const Patient: React.FC = () => {
@@ -60,18 +49,13 @@ const Patient: React.FC = () => {
 
   const { data: doctors } = useGetDoctors();
   const { data: diseases } = useGetDiseases();
-  
+
   //-----------------------------------------------
 
   //----------------------------------------------
   const columns = useMemo<MRT_ColumnDef<IPatient>[]>(
     () => [
-      /* {
-        accessorKey: '_id',
-        header: 'ID',
-        enableEditing: false,
-        size: 80,
-      }, */
+     
       {
         accessorKey: "name",
         header: "Name",
@@ -131,12 +115,10 @@ const Patient: React.FC = () => {
                 const selectedDiseases = selectedIds.map((id) =>
                   diseases?.find((disease) => disease._id === id)
                 );
-                
-                row._valuesCache.diseases = selectedDiseases;
-                
-                
 
-                //table.setEditingRow({ ...row }); // Trigger a re-render
+                row._valuesCache.diseases = selectedDiseases;
+
+                table.setEditingRow({ ...row }); // Trigger a re-render
               }}
             />
           );
@@ -174,7 +156,7 @@ const Patient: React.FC = () => {
                   doctors?.find((doctor) => doctor._id === id)
                 );
                 row._valuesCache.doctors = selectedDoctors;
-                // table.setEditingRow({ ...row }); // Trigger a re-render
+                table.setEditingRow({ ...row }); // Trigger a re-render
               }}
             />
           );
@@ -187,15 +169,10 @@ const Patient: React.FC = () => {
   // call CREATE hook
   const { mutateAsync: createPatient, isLoading: isCreatingPatient } =
     useCreatePatient();
-  // call READ hook
-  const {
-    data: fetchPatients = [],
-    isError: isLoadingPatientsError,
-    isFetching: isFetchingPatients,
-    isLoading: isLoadingPatients,
-  } = useGetPatients();
-  //data fetching from backend MongoDB
-  const { data, error, isLoading } = useGetPatients();
+
+  // call READ hook  
+  const { data, error,  isError: isLoadingPatientsError, isLoading ,isFetching: isFetchingPatients,
+    isLoading: isLoadingPatients,} = useGetPatients();
 
   // call UPDATE hook
   const { mutateAsync: updatePatient, isLoading: isUpdatingPatient } =
@@ -224,6 +201,10 @@ const Patient: React.FC = () => {
       try {
         await createPatient(payload);
         exitCreatingMode();
+        setIsCreateMode(false);
+        setEditingRowId(null);
+
+        //queryClient.invalidateQueries({ queryKey: ["patients"] });
       } catch (error) {
         console.error("Error creating patient", error);
       }
@@ -249,8 +230,18 @@ const Patient: React.FC = () => {
       };
 
       try {
-        await updatePatient(payload);
-        table.setEditingRow(null); // exit editing mode
+        if (isCreateMode) {
+          await updatePatient(payload);
+          table.setEditingRow(null);
+          setIsCreateMode(false);
+          setEditingRowId(null);
+        } else {
+          payload._id = row.original._id;
+          await updatePatient(payload);
+          table.setEditingRow(null);
+        }
+
+        //queryClient.invalidateQueries({ queryKey: ["patients"] });
       } catch (error) {
         console.error("Error updating patient", error);
       }
@@ -271,6 +262,7 @@ const Patient: React.FC = () => {
       onConfirm: () => deletePatient(row.original._id),
     });
 
+  //-----------------------------------------
   const table = useMantineReactTable({
     columns,
     data: data || [], // Ensure data is not undefined (use empty array if undefined)
@@ -320,7 +312,13 @@ const Patient: React.FC = () => {
     renderRowActions: ({ row, table }) => (
       <Flex gap="md">
         <Tooltip label="Edit">
-          <ActionIcon onClick={() => table.setEditingRow(row)}>
+          <ActionIcon
+            onClick={() => {
+              setEditingRowId(row.original._id);
+              setIsCreateMode(false);
+              table.setEditingRow(row);
+            }}
+          >
             <IconEdit />
           </ActionIcon>
         </Tooltip>
@@ -334,6 +332,8 @@ const Patient: React.FC = () => {
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
         onClick={() => {
+          setIsCreateMode(true);
+          setEditingRowId(null);
           table.setCreatingRow(true);
         }}
       >
@@ -360,122 +360,6 @@ const Patient: React.FC = () => {
   return <MantineReactTable table={table} />;
 };
 
-// CREATE hook (post new patient to api)
-function useCreatePatient() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (patient: IPatient) => {
-      /* mutationFn: async (patient: Omit<IPatient, 'diseases' | 'doctors'>
-         & { diseases: string[], doctors: string[] }) => {       */
-      const response = await fetch("http://localhost:9999/api/patients", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(patient),
-      });
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Server error:", errorResponse);
-
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-
-    onMutate: (newPatientInfo: IPatient) => {
-      queryClient.setQueryData<IPatient[]>(
-        ["patients"],
-        (prevPatients = []) => [
-          ...prevPatients,
-          {
-            ...newPatientInfo,
-            // _id: (Math.random() + 1).toString(36).substring(7),
-          },
-        ]
-      );
-    },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
-    onSuccess: () => {
-      console.log("Success");
-      
-
-    },
-    onError: () => {
-      console.log("Error creating patient");
-    },
-  });
-}
-
-// READ hook (get patients from api)
-
-//import useGetPatients ,{fetchPatients} from "../api/get-all-patients";
-import { updateDoctor } from '../../../../../EMR_Backend/src/services/doctor.service';
-import { updateDisease } from '../../../../../EMR_Backend/src/controllers/DiseaseController';
-/* function useGetPatients() {
-  return useQuery<IPatient[]>({
-    queryKey: ['patients'],
-    queryFn: fetchPatients,
-    refetchOnWindowFocus: false,
-  });
-}
- */
-// UPDATE hook (put patient in api)
-function useUpdatePatient() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (patient: IPatient) => {
-      const response = await fetch(
-        `http://localhost:9999/api/patients/${patient._id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(patient),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    onMutate: (newPatientInfo: IPatient) => {
-      queryClient.setQueryData<IPatient[]>(["patients"], (prevPatients = []) =>
-        prevPatients.map((prevPatient) =>
-          prevPatient._id === newPatientInfo._id ? newPatientInfo : prevPatient
-        )
-      );
-    },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
-  });
-}
-
-// DELETE hook (delete patient in api)
-function useDeletePatient() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (patientId: string) => {
-      const response = await fetch(
-        `http://localhost:9999/api/patients/${patientId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    onMutate: (patientId: string) => {
-      queryClient.setQueryData<IPatient[]>(["patients"], (prevPatients = []) =>
-        prevPatients.filter((patient) => patient._id !== patientId)
-      );
-    },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
-  });
-}
 
 const PatientWithProviders = () => (
   <ModalsProvider>

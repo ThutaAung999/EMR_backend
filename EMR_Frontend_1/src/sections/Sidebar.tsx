@@ -79,13 +79,13 @@ const Sidebar: React.FC<{
               className={
                 "flex justify-start items-center gap-4 w-full cursor-pointer rounded-xl " +
                 (activeNavIndex === index
-                  ? "bg-green-500 text-black"
+                  ? "bg-green-500 text-white"
                   : "text-green-900") +
                 (isExpanded ? " px-6 py-2" : " p-2")
               }
               onClick={() => setActiveNavIndex(index)}
             >
-              <div className="bg-green-400 text-black p-2 rounded-full">
+              <div className="bg-green-400 text-white p-2 rounded-full">
                 {React.createElement(icons[item], { className: 'md:w-6 w-4 h-4 md:h-6' })}
               </div>
 
@@ -101,7 +101,7 @@ const Sidebar: React.FC<{
 
       <div
         id="expanded-icon"
-        className="bg-green-500 text-black p-2 rounded-full cursor-pointer absolute -right-4 bottom-20 md:bottom-40 md:flex hidden"
+        className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute -right-4 bottom-20 md:bottom-40 md:flex hidden"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <FaArrowRight />
