@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useGetPatients from "../api/get-all-patients";
-import { Button, Group, Table } from "@mantine/core";
+import { Button, Group, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { IDisease } from "../../diseases/model/IDisease";
 import { IDoctor } from "../../doctors/model/IDoctor";
@@ -8,13 +8,18 @@ import { useDeletePatient } from "../api/delete-patients";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
 import CreatePatient from "./CreatePatient";
 import { mapIdsToDiseases, mapIdsToDoctors } from "./util";
+import { IPatient } from "../model/IPatient";
+import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 
 export const PatientList: React.FC = () => {
   const { data, error, isLoading } = useGetPatients();
   const mutationDelete = useDeletePatient();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
+    null
+  );
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [allDiseases, setAllDiseases] = useState<IDisease[]>([]);
   const [allDoctors, setAllDoctors] = useState<IDoctor[]>([]);
@@ -22,13 +27,13 @@ export const PatientList: React.FC = () => {
   useEffect(() => {
     // Fetch diseases and doctors
     const fetchDiseases = async () => {
-      const response = await fetch('http://localhost:9999/api/diseases');
+      const response = await fetch("http://localhost:9999/api/diseases");
       const data = await response.json();
       setAllDiseases(data);
     };
 
     const fetchDoctors = async () => {
-      const response = await fetch('http://localhost:9999/api/doctors');
+      const response = await fetch("http://localhost:9999/api/doctors");
       const data = await response.json();
       setAllDoctors(data);
     };
@@ -49,7 +54,38 @@ export const PatientList: React.FC = () => {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
 
-  const currentData = data?.slice((active - 1) * itemsPerPage, active * itemsPerPage);
+  const filterPatients = (patients: IPatient[]) => {
+    return patients.filter((patient) => {
+      const patientDiseases = mapIdsToDiseases(
+        patient.diseases.map((d) => d._id),
+        allDiseases
+      );
+      const patientDoctors = mapIdsToDoctors(
+        patient.doctors.map((d) => d._id),
+        allDoctors
+      );
+
+      const diseasesText = patientDiseases
+        .map((disease) => disease.name)
+        .join(", ");
+      const doctorsText = patientDoctors
+        .map((doctor) => doctor.name)
+        .join(", ");
+
+      return (
+        patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        patient.age.toString().includes(searchQuery) ||
+        diseasesText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctorsText.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  };
+
+  const filteredData = filterPatients(data || []);
+  const currentData = filteredData.slice(
+    (active - 1) * itemsPerPage,
+    active * itemsPerPage
+  );
 
   const handleDelete = (id: string) => {
     setSelectedPatientId(id);
@@ -64,27 +100,40 @@ export const PatientList: React.FC = () => {
     setSelectedPatientId(null);
   };
 
-  const rows = currentData?.map((patient) => {
-    const patientDiseases = mapIdsToDiseases(patient.diseases.map(d => d._id), allDiseases);
-    const patientDoctors = mapIdsToDoctors(patient.doctors.map(d => d._id), allDoctors);
+  const rows =
+    currentData?.map((patient) => {
+      const patientDiseases = mapIdsToDiseases(
+        patient.diseases.map((d) => d._id),
+        allDiseases
+      );
+      const patientDoctors = mapIdsToDoctors(
+        patient.doctors.map((d) => d._id),
+        allDoctors
+      );
 
-    return (
-      <tr key={patient._id}>
-        <td>{patient.name}</td>
-        <td>{patient.age}</td>
-        <td>{patientDiseases.map(disease => disease.name).join(", ")}</td>
-        <td>{patientDoctors.map(doctor => doctor.name).join(", ")}</td>
-        <td style={{ width: "10px", whiteSpace: "nowrap" }} >
-          <Button className="text-white bg-red-600 " onClick={() => handleDelete(patient._id)}>
-            Delete
-          </Button>
-          <Button className="text-white bg-blue-500 mx-6 " onClick={() => handleDelete(patient._id)}>
-            Edit
-          </Button>
-        </td>
-      </tr>
-    );
-  }) || [];
+      return (
+        <tr key={patient._id}>
+          <td>{patient.name}</td>
+          <td>{patient.age}</td>
+          <td>{patientDiseases.map((disease) => disease.name).join(", ")}</td>
+          <td>{patientDoctors.map((doctor) => doctor.name).join(", ")}</td>
+          <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+            <Button
+              className="text-white bg-red-600 "
+              onClick={() => handleDelete(patient._id)}
+            >
+              <IconTrash size={16} />
+            </Button>
+            <Button
+              className="text-black bg-yellow-300 mx-6 "
+              onClick={() => handleDelete(patient._id)}
+            >
+              <IconEdit size={16} />
+            </Button>
+          </td>
+        </tr>
+      );
+    }) || [];
 
   const renderPaginationButtons = () => {
     const buttons = [];
@@ -130,7 +179,11 @@ export const PatientList: React.FC = () => {
       );
 
       if (active > 3) {
-        buttons.push(<span className="text-blue-600 " key="left-ellipsis">. . . </span>);
+        buttons.push(
+          <span className="text-blue-600 " key="left-ellipsis">
+            . . .{" "}
+          </span>
+        );
       }
 
       const startPage = Math.max(2, active - 1);
@@ -149,7 +202,11 @@ export const PatientList: React.FC = () => {
       }
 
       if (active < totalPages - 2) {
-        buttons.push(<span className="text-blue-600 " key="right-ellipsis">. . .</span>);
+        buttons.push(
+          <span className="text-blue-600 " key="right-ellipsis">
+            . . .
+          </span>
+        );
       }
 
       buttons.push(
@@ -173,7 +230,11 @@ export const PatientList: React.FC = () => {
     // Show "Last" button
     if (totalPages > 1) {
       buttons.push(
-        <Button onClick={() => setPage(totalPages)} disabled={active === totalPages} key="last">
+        <Button
+          onClick={() => setPage(totalPages)}
+          disabled={active === totalPages}
+          key="last"
+        >
           Last
         </Button>
       );
@@ -183,8 +244,20 @@ export const PatientList: React.FC = () => {
   };
 
   return (
-    <>
-      <CreatePatient />
+    <section className="h-full w-full">
+      <div className="flex flex-row justify-between items-start  min-w-full ">
+        <CreatePatient />
+        <TextInput
+          className=" w-80 "
+          placeholder="Search"
+          
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          mb="md"
+          icon={<IconSearch size={16} />}
+        />
+      </div>
+
       <div className="h-full w-full">
         <Table striped highlightOnHover verticalSpacing="md">
           <thead>
@@ -201,9 +274,13 @@ export const PatientList: React.FC = () => {
         <Group position="center" mt="md">
           {renderPaginationButtons()}
         </Group>
-        <ConfirmDialog open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={handleConfirmDelete} />
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={handleConfirmDelete}
+        />
       </div>
-    </>
+    </section>
   );
 };
 

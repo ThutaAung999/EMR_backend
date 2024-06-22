@@ -13,9 +13,15 @@ import { useDisclosure } from "@mantine/hooks";
 import { useCreatePatient } from "../api/create-patient";
 import { IPatient } from "../model/IPatient";
 import useGetPatients from "../api/get-all-patients";
+import { IconUserPlus } from "@tabler/icons-react";
 
 const CreatePatient: React.FC = () => {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<IPatient>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<IPatient>({
     defaultValues: {
       name: "",
       age: 0,
@@ -25,15 +31,15 @@ const CreatePatient: React.FC = () => {
   });
 
   const mutation = useCreatePatient(() => {
-    close();  // Close the modal on success
-    reset();  // Reset the form values
+    close(); // Close the modal on success
+    reset(); // Reset the form values
   });
 
   const onSubmit = (data: IPatient) => {
     const transformedData = {
       ...data,
-      diseases: data.diseases.map(disease => disease._id),
-      doctors: data.doctors.map(doctor => doctor._id)
+      diseases: data.diseases.map((disease) => disease._id),
+      doctors: data.doctors.map((doctor) => doctor._id),
     };
     mutation.mutate(transformedData);
   };
@@ -48,15 +54,23 @@ const CreatePatient: React.FC = () => {
     return <div>Error</div>;
   }
 
-  const diseaseOptions = data
-    ?.flatMap((patient) => patient.diseases)
-    .filter((disease, index, self) => self.findIndex(d => d._id === disease._id) === index)
-    .map((disease) => ({ value: disease._id, label: disease.name })) || [];
+  const diseaseOptions =
+    data
+      ?.flatMap((patient) => patient.diseases)
+      .filter(
+        (disease, index, self) =>
+          self.findIndex((d) => d._id === disease._id) === index
+      )
+      .map((disease) => ({ value: disease._id, label: disease.name })) || [];
 
-  const doctorOptions = data
-    ?.flatMap((patient) => patient.doctors)
-    .filter((doctor, index, self) => self.findIndex(d => d._id === doctor._id) === index)
-    .map((doctor) => ({ value: doctor._id, label: doctor.name })) || [];
+  const doctorOptions =
+    data
+      ?.flatMap((patient) => patient.doctors)
+      .filter(
+        (doctor, index, self) =>
+          self.findIndex((d) => d._id === doctor._id) === index
+      )
+      .map((doctor) => ({ value: doctor._id, label: doctor.name })) || [];
 
   return (
     <>
@@ -131,7 +145,7 @@ const CreatePatient: React.FC = () => {
               )}
             />
 
-            <div className="flex flex-row gap-6 justify-end">            
+            <div className="flex flex-row gap-6 justify-end">
               <Button onClick={close}>Cancel</Button>
               <Button type="submit">Save</Button>
             </div>
@@ -140,7 +154,9 @@ const CreatePatient: React.FC = () => {
       </Modal>
 
       <Stack align="center">
-        <Button onClick={open}>Create New Patient</Button>
+        <Button onClick={open} leftIcon={<IconUserPlus size={18} />}>
+          New Patient
+        </Button>
       </Stack>
     </>
   );
