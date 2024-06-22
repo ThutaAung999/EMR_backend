@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import { MdMedicalServices } from "react-icons/md";
 
-const dashboard: React.FC = () => {
+const Dashboard: React.FC = () => {
   return (
     <section className="w-4/5 grow bg-white h-screen overflow-y-auto flex flex-col justify-start items-center gap-2 p-4">
       <header className="bg-blue-600 text-white p-4">
@@ -83,4 +83,4 @@ const dashboard: React.FC = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;

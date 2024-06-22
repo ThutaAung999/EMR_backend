@@ -9,14 +9,14 @@ import PatientList from "./features/patients/components/PatientList.tsx";
 
 const queryClient = new QueryClient();
 
-<BrowserRouter>
+{/* <BrowserRouter>
   <Routes>
     <Route path="/" element={<App/>}/>
     <Route path="/admin/patients" element={<PatientList/>}/>
     
   </Routes>
 </BrowserRouter>;
-
+ */}
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
