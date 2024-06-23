@@ -14,9 +14,8 @@ import TagList from "./features/tags/components/TagList.tsx";
 
 const queryClient = new QueryClient();
 
-
 <Routes>
- {/*  <Route path="/" element={<Dashboard />} /> */}
+  {/*  <Route path="/" element={<Dashboard />} /> */}
   <Route path="/patients" element={<PatientList />} />
   <Route path="/medicines" element={<MedicineList />} />
   <Route path="/diseases" element={<DiseaseList />} />
@@ -28,7 +27,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </MantineProvider>
     </QueryClientProvider>
   </React.StrictMode>

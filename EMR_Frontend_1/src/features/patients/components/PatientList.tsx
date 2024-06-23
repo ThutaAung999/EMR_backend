@@ -21,11 +21,9 @@ export const PatientList: React.FC = () => {
     null
   );
 
-
-  //Update
+  // Update
   const [selectedPatient, setSelectedPatient] = useState<IPatient | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -42,7 +40,7 @@ export const PatientList: React.FC = () => {
       const allDiseases = await response.json();
       setAllDiseases(allDiseases);
     };
-    
+
     const fetchDoctors = async () => {
       const response = await fetch("http://localhost:9999/api/doctors");
       if (!response.ok) {
@@ -55,7 +53,6 @@ export const PatientList: React.FC = () => {
     fetchDiseases();
     fetchDoctors();
   }, []);
-
 
   const itemsPerPage = 10;
   const totalItems = data?.length || 0;
@@ -115,12 +112,10 @@ export const PatientList: React.FC = () => {
     setSelectedPatientId(null);
   };
 
-
   const handleUpdate = (patient: IPatient) => {
     setSelectedPatient(patient);
     setUpdateModalOpen(true);
   };
-
 
   const rows =
     currentData?.map((patient) => {
@@ -272,7 +267,6 @@ export const PatientList: React.FC = () => {
         <TextInput
           className=" w-80 "
           placeholder="Search"
-          
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           mb="md"
@@ -301,8 +295,11 @@ export const PatientList: React.FC = () => {
           onClose={() => setConfirmOpen(false)}
           onConfirm={handleConfirmDelete}
         />
-         {updateModalOpen && selectedPatient && (
-          <UpdatePatient patient={selectedPatient} closeModal={() => setUpdateModalOpen(false)} />
+        {updateModalOpen && selectedPatient && (
+          <UpdatePatient
+            patient={selectedPatient}
+            closeModal={() => setUpdateModalOpen(false)}
+          />
         )}
       </div>
     </section>

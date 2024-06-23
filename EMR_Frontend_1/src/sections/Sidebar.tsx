@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { GiPillDrop, GiMedicalPack, GiVirus } from "react-icons/gi";
 import { FaArrowRight, FaUserFriends } from "react-icons/fa";
 import { AiOutlineTag } from "react-icons/ai";
+import { NavLink, useLocation } from "react-router-dom";
 import { NavItem } from "../App";
-import { NavLink,useLocation } from "react-router-dom";
 
 const variants = {
   expanded: { width: "20%" },
@@ -36,10 +36,7 @@ const Sidebar: React.FC<{
   navItems: NavItem[];
 }> = ({ activeNavIndex, setActiveNavIndex, navItems }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-
   const location = useLocation();
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,9 +48,7 @@ const Sidebar: React.FC<{
       }
     };
     handleResize();
-
     window.addEventListener("resize", handleResize);
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -76,7 +71,7 @@ const Sidebar: React.FC<{
         (isExpanded ? "py-8 px-6" : "px-8 py-6")
       }
     >
-      <div className="flex flex-col justify-center items-center  gap-8">
+      <div className="flex flex-col justify-center items-center gap-8">
         {isExpanded ? (
           <div id="logo-box">
             <h1 className="text-green-800 font-bold text-4xl">
@@ -86,7 +81,7 @@ const Sidebar: React.FC<{
         ) : (
           <div className="flex justify-center items-center">
             <h1 className="text-green-800 font-bold text-3xl">E</h1>
-            <span className="italic text-green-600 text-3xl">A</span>{" "}
+            <span className="italic text-green-600 text-3xl">A</span>
           </div>
         )}
 
@@ -106,7 +101,6 @@ const Sidebar: React.FC<{
                   : "text-green-900") +
                 (isExpanded ? " px-6 py-2" : " p-2")
               }
-             /*  onClick={() => setActiveNavIndex(index)} */
             >
               <div className="bg-green-400 text-white p-2 rounded-full">
                 {React.createElement(icons[item], {
@@ -115,9 +109,7 @@ const Sidebar: React.FC<{
               </div>
 
               {isExpanded && (
-                <span
-                  className={"text-lg" + (isExpanded ? " flex" : " hidden")}
-                >
+                <span className={"text-lg" + (isExpanded ? " flex" : " hidden")}>
                   {item}
                 </span>
               )}
