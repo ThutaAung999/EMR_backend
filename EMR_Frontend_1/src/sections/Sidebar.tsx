@@ -23,7 +23,7 @@ const icons: Record<NavItem, React.ElementType> = {
 
 const routes: Record<NavItem, string> = {
   Dashboard: "/",
-  Patients: "/PatientList",
+  Patients: "/patients",
   Medicines: "/medicines",
   Diseases: "/diseases",
   EMRs: "/emrs",
