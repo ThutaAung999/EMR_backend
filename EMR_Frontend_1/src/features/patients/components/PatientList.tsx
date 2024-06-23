@@ -10,6 +10,7 @@ import CreatePatient from "./CreatePatient";
 import { mapIdsToDiseases, mapIdsToDoctors } from "./util";
 import { IPatient } from "../model/IPatient";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
+import UpdatePatient from "./UpdatePatient";
 
 export const PatientList: React.FC = () => {
   const { data, error, isLoading } = useGetPatients();
@@ -19,6 +20,13 @@ export const PatientList: React.FC = () => {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
     null
   );
+
+
+  //Update
+  const [selectedPatient, setSelectedPatient] = useState<IPatient | null>(null);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const [allDiseases, setAllDiseases] = useState<IDisease[]>([]);
@@ -28,21 +36,28 @@ export const PatientList: React.FC = () => {
     // Fetch diseases and doctors
     const fetchDiseases = async () => {
       const response = await fetch("http://localhost:9999/api/diseases");
-      const data = await response.json();
-      setAllDiseases(data);
+      if (!response.ok) {
+        throw new Error("Failed to fetch diseases");
+      }
+      const allDiseases = await response.json();
+      setAllDiseases(allDiseases);
     };
-
+    
     const fetchDoctors = async () => {
       const response = await fetch("http://localhost:9999/api/doctors");
-      const data = await response.json();
-      setAllDoctors(data);
+      if (!response.ok) {
+        throw new Error("Failed to fetch doctors");
+      }
+      const allDoctors = await response.json();
+      setAllDoctors(allDoctors);
     };
 
     fetchDiseases();
     fetchDoctors();
   }, []);
 
-  const itemsPerPage = 5;
+
+  const itemsPerPage = 10;
   const totalItems = data?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -100,6 +115,13 @@ export const PatientList: React.FC = () => {
     setSelectedPatientId(null);
   };
 
+
+  const handleUpdate = (patient: IPatient) => {
+    setSelectedPatient(patient);
+    setUpdateModalOpen(true);
+  };
+
+
   const rows =
     currentData?.map((patient) => {
       const patientDiseases = mapIdsToDiseases(
@@ -126,7 +148,7 @@ export const PatientList: React.FC = () => {
             </Button>
             <Button
               className="text-black bg-yellow-300 mx-6 "
-              onClick={() => handleDelete(patient._id)}
+              onClick={() => handleUpdate(patient)}
             >
               <IconEdit size={16} />
             </Button>
@@ -279,6 +301,9 @@ export const PatientList: React.FC = () => {
           onClose={() => setConfirmOpen(false)}
           onConfirm={handleConfirmDelete}
         />
+         {updateModalOpen && selectedPatient && (
+          <UpdatePatient patient={selectedPatient} closeModal={() => setUpdateModalOpen(false)} />
+        )}
       </div>
     </section>
   );

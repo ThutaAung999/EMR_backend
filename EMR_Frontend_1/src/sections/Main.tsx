@@ -5,9 +5,7 @@ import { NavItem } from "../App";
 import Dashboard from "../components/dashboard";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import PatientWithProviders from "../features/patients/components/Patient";
 import PatientList from "../features/patients/components/PatientList";
-import CreatePatient from "../features/patients/components/CreatePatient";
 import DiseaseList from "../features/diseases/components/DiseaseList";
 import MedicineList from "../features/medicine/components/MedicineList";
 import EmrList from "../features/emrs/components/EmrList";
@@ -19,7 +17,7 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
   navItems,
 }) => {
   return (
-    <section className="w-4/5 grow bg-white h-screen flex flex-col justify-between items-center">
+    <section className="w-full grow bg-white h-screen flex flex-col justify-between items-center">
     
       <Header />
       <div className="w-full flex-grow flex flex-col justify-start items-center gap-2 p-4">

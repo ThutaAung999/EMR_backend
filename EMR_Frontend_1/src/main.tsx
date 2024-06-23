@@ -16,7 +16,7 @@ const queryClient = new QueryClient();
 
 
 <Routes>
-  <Route path="/" element={<Dashboard />} />
+ {/*  <Route path="/" element={<Dashboard />} /> */}
   <Route path="/patients" element={<PatientList />} />
   <Route path="/medicines" element={<MedicineList />} />
   <Route path="/diseases" element={<DiseaseList />} />

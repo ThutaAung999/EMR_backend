@@ -78,7 +78,10 @@ const fetchDiseases = async () => {
 };
 
 export const useGetDiseases = () => {
-  return useQuery(['diseases'], fetchDiseases);
+  return useQuery({
+    queryKey: ['diseases'],
+    queryFn: fetchDiseases
+  });
 };
 
 
@@ -91,6 +94,9 @@ const fetchDoctors = async () => {
 };
 
 export const useGetDoctors = () => {
-  return useQuery(['doctors'], fetchDoctors);
+  return useQuery({
+    queryKey: ['doctors'],
+    queryFn: fetchDoctors
+  });
 };
 /******************************* */

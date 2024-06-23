@@ -76,7 +76,7 @@ const Sidebar: React.FC<{
         (isExpanded ? "py-8 px-6" : "px-8 py-6")
       }
     >
-      <div className="flex flex-col justify-center items-center gap-8">
+      <div className="flex flex-col justify-center items-center  gap-8">
         {isExpanded ? (
           <div id="logo-box">
             <h1 className="text-green-800 font-bold text-4xl">
