@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { IMedicineDTO } from "../DTO/IMedicineDTO";
 
 
-
 export function useCreateMedicine(onSuccessCallback?: () => void) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();

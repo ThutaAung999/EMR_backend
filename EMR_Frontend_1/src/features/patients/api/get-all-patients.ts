@@ -3,10 +3,10 @@ import { IPatient } from '../model/IPatient';
 
 // Function to fetch patients from the API
 export const fetchPatients = async (): Promise<IPatient[]> => {
-    console.log("fetchPatients from frontend PatientService");
+    console.log("fetchPatients from frontent");
     const response = await fetch('http://localhost:9999/api/patients');
     if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Fail to fetch patients');
     }
     return response.json();
 };

@@ -10,13 +10,15 @@ const fetchDiseases = async (): Promise<IDisease[]> => {
   return response.json();
 };
 
-  export const useGetDiseases = () => {
+export  const useGetDiseases = () => {
     return useQuery<IDisease[], Error>({
         queryKey: ['diseases'],
         queryFn: fetchDiseases,
         refetchOnWindowFocus: false,
     });
 };
+
+
   /* export const useGetDiseases = () => {
     return useQuery<IDisease[], Error>("diseases", fetchDiseases);
   };

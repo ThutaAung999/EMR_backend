@@ -10,8 +10,8 @@ export const zodPatientSchema = z.object({
         required_error: "description is required",
         invalid_type_error: "Description must be a string",
     }),
-    doctors: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/), {message: "Invalid doctor ID"}),
-    diseases: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/), {message: "Invalid diseases ID"}),
+    patients: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/), {message: "Invalid patient ID"}),
+    medicines: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/), {message: "Invalid medicine ID"}),
 });
 
 export const zodPatientUpdateSchema = zodPatientSchema.partial();

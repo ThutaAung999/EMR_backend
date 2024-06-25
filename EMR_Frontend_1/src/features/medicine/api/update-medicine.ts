@@ -1,18 +1,17 @@
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IPatient } from "../model/IPatient";
+import { IMedicine } from "../model/IMedicine";
 
-export function useUpdatePatient() {
+export function useUpdateMedicine() {
   const queryClient = useQueryClient();
 
-  const updatePatient = useMutation({
-    mutationFn: async (updatedPatient: IPatient) => {
-      const response = await fetch(`http://localhost:9999/api/patients/${updatedPatient._id}`, {
+  const updateMedicine = useMutation({
+    mutationFn: async (updatedMedicine: IMedicine) => {
+      const response = await fetch(`http://localhost:9999/api/patients/${updatedMedicine._id}`, {
         method: "PATCH", // or "PUT" if you prefer full update
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedPatient),
+        body: JSON.stringify(updatedMedicine),
       });
 
       if (!response.ok) {
@@ -23,10 +22,10 @@ export function useUpdatePatient() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] });
+      queryClient.invalidateQueries({ queryKey: ['medicines'] });
     },
   });
 
-  return updatePatient;
+  return updateMedicine;
 }
 

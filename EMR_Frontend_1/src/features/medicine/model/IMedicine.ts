@@ -7,3 +7,8 @@ export type IMedicine = {
     diseases: IDisease[];    
   }
   
+  export type IMedicineDTO = {
+    name: string;
+    manufacturer: string;
+    diseases: string[];    
+  };

@@ -8,3 +8,10 @@ import { IPatient } from "../../patients/model/IPatient";
     patients: IPatient[];
     medicines: IMedicine[];
   }
+  
+export type IDiseaseDTO = {
+  name: string;
+  description: string;
+  /* patients: string[];
+  medicines: string[]; */
+};

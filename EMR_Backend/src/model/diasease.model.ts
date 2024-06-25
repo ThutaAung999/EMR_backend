@@ -4,8 +4,8 @@ export interface IDisease extends Document {
     _id: mongoose.Types.ObjectId;
     name: string;
     description?: string;
-    patients: mongoose.Types.ObjectId[];
-    medicines: mongoose.Types.ObjectId[];
+    patients?: mongoose.Types.ObjectId[];
+    medicines?: mongoose.Types.ObjectId[];
 }
 
 const diseaseSchema: Schema<IDisease> = new Schema({

@@ -14,6 +14,7 @@ import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 
 export const PatientList: React.FC = () => {
+
   const { data, error, isLoading } = useGetPatients();
   const mutationDelete = useDeletePatient();
 
@@ -91,7 +92,15 @@ export const PatientList: React.FC = () => {
     setSelectedPatient(patient);
     setUpdateModalOpen(true);
   };
+  
+/*   data?.map(patient=>{
+    console.log("patient :"+patient.name+" has below diseases:");
+    patient.diseases.map(disease=>{
+      console.log("\n",disease.name)
+    })
+  })
 
+ */
   const rows = currentData?.map((patient) => {
     const patientDiseases = mapIdsToDiseases(
       (patient.diseases ?? []).map((d) => d._id),
@@ -111,7 +120,7 @@ export const PatientList: React.FC = () => {
         <td style={{ width: "10px", whiteSpace: "nowrap" }}>
           <Button
             className="text-white bg-red-600"
-            onClick={() => handleDelete(patient._id)}
+            onClick={() => handleDelete(patient._id )}
           >
             <IconTrash size={16} />
           </Button>
