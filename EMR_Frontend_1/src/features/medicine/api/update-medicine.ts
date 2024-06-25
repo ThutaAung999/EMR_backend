@@ -6,7 +6,7 @@ export function useUpdateMedicine() {
 
   const updateMedicine = useMutation({
     mutationFn: async (updatedMedicine: IMedicine) => {
-      const response = await fetch(`http://localhost:9999/api/patients/${updatedMedicine._id}`, {
+      const response = await fetch(`http://localhost:9999/api/medicines/${updatedMedicine._id}`, {
         method: "PATCH", // or "PUT" if you prefer full update
         headers: {
           'Content-Type': 'application/json',

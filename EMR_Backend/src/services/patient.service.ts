@@ -66,6 +66,7 @@ export const newPatient = async (patient: IPatient): Promise<IPatient> => {
 
 
 export const updatePatient = async (patientId: string, patient: IPatient): Promise<IPatient> => {
+
     zodPatientUpdateSchema.parse(patient);
     const newPatient = <IPatient>await Patient.findByIdAndUpdate(patientId, patient, {new: true});
     //return newPatient as IPatient;   //   This way  works  also.

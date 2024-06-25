@@ -1,11 +1,12 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useCreateMedicine } from "../api/create-medicine";
-import { IMedicine } from "../model/IMedicine";
+import { IMedicine, IMedicineDTO } from "../model/IMedicine";
 import { Button, Modal, MultiSelect, Stack, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useGetMedicines } from "../api/get-all-medicines";
 import { IconUserPlus } from "@tabler/icons-react";
+import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 
 const CreateMedicine: React.FC = () => {
   const {
@@ -13,7 +14,7 @@ const CreateMedicine: React.FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IMedicine>({
+  } = useForm<IMedicineDTO>({
     defaultValues: {
       name: "",
       manufacturer: "",
@@ -26,37 +27,30 @@ const CreateMedicine: React.FC = () => {
     reset();
   });
 
-
-  const onSubmit = (data: IMedicine) => {
-    const transformedData = {
-      ...data,
-      diseases: data.diseases.map((disease) => disease._id),
-    };
-    mutation.mutate(transformedData);
+  const onSubmit = (data: IMedicineDTO) => {
+    mutation.mutate(data);
   };
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { data, error, isLoading } = useGetMedicines();
+  const { data: medicines, error, isLoading } = useGetMedicines();
+  const { data: diseases, error:diseaseError, isLoading : diseaseIsLoading } = useGetDiseases();
+
+  if (isLoading || diseaseIsLoading) return <div>Loading...</div>;
+
+  if (error || diseaseError) return <div>Error</div>;
 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error</div>;
-  }
-
-  console.log(data)
-  // Prepare disease options
   const diseaseOptions =
-    data?.flatMap((medicine) => medicine.diseases) // Flatten diseases from all medicines
-      .filter((disease, index, self) => self.findIndex((d) => d._id === disease._id) === index) // Remove duplicates
-      .map((disease) => ({ value: disease._id, label: disease.name })) || []; // Map to value-label pairs
-
-      console.log(diseaseOptions);
-
-
+    diseases
+      ?.filter(
+        (disease, index, self) =>
+          disease &&
+          disease._id &&
+          self.findIndex((d) => d?._id === disease._id) === index
+      )
+      .map((disease) => ({ value: disease._id, label: disease.name })) || [];
+  
   return (
     <>
       <Modal opened={opened} onClose={close} title="New Medicine">
@@ -90,7 +84,6 @@ const CreateMedicine: React.FC = () => {
               )}
             />
 
-
             <Controller
               name="diseases"
               control={control}
@@ -99,11 +92,11 @@ const CreateMedicine: React.FC = () => {
                   data={diseaseOptions}
                   label="Diseases"
                   placeholder="Select diseases"
-                  value={field.value.map((disease: any) => disease._id)}
-                  onChange={(values) =>
-                    field.onChange(values.map((id) => ({ _id: id })))
+                  value={field.value}
+                  onChange={(values) => field.onChange(values)}
+                  error={
+                    errors.diseases && "Please select at least one disease"
                   }
-                  error={errors.diseases && "Please select at least one disease"}
                 />
               )}
             />

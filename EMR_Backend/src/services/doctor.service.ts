@@ -1,8 +1,7 @@
 import DoctorModel , {IDoctor} from "../model/doctor.model";
 
-
 export const getAllDoctors = async () : Promise<IDoctor[]> =>{
-    return DoctorModel.find().exec();
+    return DoctorModel.find().populate("patients").exec();
 }
 
 export const getDoctorById = async (doctorId : string) : Promise<IDoctor | null> =>{
@@ -17,10 +16,11 @@ export const newDoctor = async (doctor: IDoctor): Promise<IDoctor> => {
 
 
 export const updateDoctor = async(doctorId : string , doctor : IDoctor) :Promise<IDoctor>=>{
+
     const newDoctor = <IDoctor>await DoctorModel.findByIdAndUpdate(doctorId,doctor,{new:true});
 
-    //return newDisease as IDoctor;   //   This way  works  also.
-    return newDoctor;
+    console.log("newDoctor",newDoctor)
+    return newDoctor as IDoctor;
 }
 
 export const deleteDoctor = async(doctorId: String):Promise<IDoctor>=>{

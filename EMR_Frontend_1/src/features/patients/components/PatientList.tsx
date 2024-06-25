@@ -93,14 +93,6 @@ export const PatientList: React.FC = () => {
     setUpdateModalOpen(true);
   };
   
-/*   data?.map(patient=>{
-    console.log("patient :"+patient.name+" has below diseases:");
-    patient.diseases.map(disease=>{
-      console.log("\n",disease.name)
-    })
-  })
-
- */
   const rows = currentData?.map((patient) => {
     const patientDiseases = mapIdsToDiseases(
       (patient.diseases ?? []).map((d) => d._id),

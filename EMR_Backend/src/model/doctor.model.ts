@@ -1,10 +1,11 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { IPatient } from '../model/patient.model';
 
 export interface IDoctor extends Document {
     _id: mongoose.Types.ObjectId;
     name: string;
     specialty: string;
-    patients: mongoose.Types.ObjectId[];
+    patients: mongoose.Types.ObjectId[] | IPatient;
 }
 
 const doctorSchema: Schema<IDoctor> = new Schema({

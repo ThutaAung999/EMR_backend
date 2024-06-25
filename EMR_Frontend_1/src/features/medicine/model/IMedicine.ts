@@ -12,3 +12,5 @@ export type IMedicine = {
     manufacturer: string;
     diseases: string[];    
   };
+
+  

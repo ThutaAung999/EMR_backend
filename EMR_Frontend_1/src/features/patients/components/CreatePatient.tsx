@@ -13,6 +13,8 @@ import { useCreatePatient } from "../api/create-patient";
 import { IPatientDTO } from "../model/IPatient";
 import useGetPatients from "../api/get-all-patients";
 import { IconUserPlus } from "@tabler/icons-react";
+import { useGetDiseases } from "../../diseases/api/get-all-diseases";
+import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 
 const CreatePatient: React.FC = () => {
   const {
@@ -34,6 +36,18 @@ const CreatePatient: React.FC = () => {
     reset();
   });
 
+  const {
+    data: diseases,
+    error: diseaseError,
+    isLoading: diseaseIsLoading,
+  } = useGetDiseases();
+
+  const {
+    data: doctors,
+    error: doctorError,
+    isLoading: doctorIsLoading,
+  } = useGetDoctors();
+
   const onSubmit = (data: IPatientDTO) => {
     mutation.mutate(data);
   };
@@ -41,25 +55,29 @@ const CreatePatient: React.FC = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
   const { data: patients, error, isLoading } = useGetPatients();
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  if (isLoading || diseaseIsLoading || doctorIsLoading)
+    return <div>Loading...</div>;
+  if (error || diseaseError || doctorError) return <div>Error</div>;
 
-  const diseaseOptions = patients
-    ?.flatMap((patient) => patient.diseases)
-    .filter(
-      (disease, index, self) =>
-        disease && disease._id && self.findIndex((d) => d?._id === disease._id) === index
-    )
-    .map((disease) => ({ value: disease._id, label: disease.name })) || [];
+  const diseaseOptions =
+    diseases
+      ?.filter(
+        (disease, index, self) =>
+          disease &&
+          disease._id &&
+          self.findIndex((d) => d?._id === disease._id) === index
+      )
+      .map((disease) => ({ value: disease._id, label: disease.name })) || [];
 
-  const doctorOptions = patients
-    ?.flatMap((patient) => patient.doctors)
-    .filter(
-      (doctor, index, self) =>
-        doctor && doctor._id && self.findIndex((d) => d?._id === doctor._id) === index
-    )
-    .map((doctor) => ({ value: doctor._id, label: doctor.name })) || [];
-
+  const doctorOptions =
+    doctors
+      ?.filter(
+        (doctor, index, self) =>
+          doctor &&
+          doctor._id &&
+          self.findIndex((d) => d?._id === doctor._id) === index
+      )
+      .map((doctor) => ({ value: doctor._id, label: doctor.name })) || [];
   return (
     <>
       <Modal opened={opened} onClose={close} title="New Patient">
