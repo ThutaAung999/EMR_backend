@@ -5,7 +5,7 @@ import {
     getemrImageById,
     newEmrImage,
     updateEmrImage
-} from '../controllers/EMR_ImageController'
+} from '../controllers/emr_Image.ontroller'
 
 
 const router: Router = express.Router()

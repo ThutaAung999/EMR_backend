@@ -1,5 +1,5 @@
 import express, {Router} from 'express';
-import {deleteDoctor, getAllDoctors, getDoctorById, newDoctor, updateDoctor} from "../controllers/DoctorController";
+import {deleteDoctor, getAllDoctors, getDoctorById, newDoctor, updateDoctor} from "../controllers/doctor.controller";
 
 
 const router: Router = express.Router()

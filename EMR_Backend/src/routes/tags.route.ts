@@ -1,5 +1,5 @@
 import express, {Router} from 'express';
-import {deleteTag, getAllTags, getTagById, newTag, updateTag} from "../controllers/TagController";
+import {deleteTag, getAllTags, getTagById, newTag, updateTag} from "../controllers/tag.controller";
 
 
 const router: Router = express.Router()

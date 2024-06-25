@@ -1,6 +1,6 @@
 import express, {Router} from 'express';
 
-import {getAllDiseases, getDiseaseById, newDisease,updateDisease,deleteDisease} from "../controllers/DiseaseController";
+import {getAllDiseases, getDiseaseById, newDisease,updateDisease,deleteDisease} from "../controllers/disease.controller";
 
 const router: Router = express.Router()
 

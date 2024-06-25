@@ -1,6 +1,6 @@
 import express, {Router} from 'express';
 
-import {getAllMedicines,newMedicine,getMedicineById,updateMedicine,deleteMedicine} from '../controllers/MedicineController'
+import {getAllMedicines,newMedicine,getMedicineById,updateMedicine,deleteMedicine} from '../controllers/medicine.controller'
 
 
 const router: Router = express.Router();

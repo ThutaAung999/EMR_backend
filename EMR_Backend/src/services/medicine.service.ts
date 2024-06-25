@@ -6,7 +6,8 @@ import {getAllPatient} from "./patient.service";
 
 
 export const getAllMidicine = async (): Promise<IMedicine[]> => {
-    return MedicineModel.find().exec();
+    return MedicineModel.find().
+        populate("diseases").exec();
 };
 
 export const getMedicineById = async (medicineId: string): Promise<IMedicine | null> => {

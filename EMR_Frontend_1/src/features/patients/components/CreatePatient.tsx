@@ -9,9 +9,8 @@ import {
   Modal,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-
 import { useCreatePatient } from "../api/create-patient";
-import { IPatient } from "../model/IPatient";
+import { IPatientDTO } from "../model/IPatient";
 import useGetPatients from "../api/get-all-patients";
 import { IconUserPlus } from "@tabler/icons-react";
 
@@ -21,7 +20,7 @@ const CreatePatient: React.FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IPatient>({
+  } = useForm<IPatientDTO>({
     defaultValues: {
       name: "",
       age: 0,
@@ -31,46 +30,35 @@ const CreatePatient: React.FC = () => {
   });
 
   const mutation = useCreatePatient(() => {
-    close(); // Close the modal on success
-    reset(); // Reset the form values
+    close();
+    reset();
   });
 
-  const onSubmit = (data: IPatient) => {
-    const transformedData = {
-      ...data,
-      diseases: data.diseases.map((disease) => disease._id),
-      doctors: data.doctors.map((doctor) => doctor._id),
-    };
-    mutation.mutate(transformedData);
+  const onSubmit = (data: IPatientDTO) => {
+    mutation.mutate(data);
   };
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { data, error, isLoading } = useGetPatients();
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error</div>;
-  }
+  const { data: patients, error, isLoading } = useGetPatients();
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
 
-  const diseaseOptions =
-    data
-      ?.flatMap((patient) => patient.diseases)
-      .filter(
-        (disease, index, self) =>
-          self.findIndex((d) => d._id === disease._id) === index
-      )
-      .map((disease) => ({ value: disease._id, label: disease.name })) || [];
+  const diseaseOptions = patients
+    ?.flatMap((patient) => patient.diseases)
+    .filter(
+      (disease, index, self) =>
+        disease && disease._id && self.findIndex((d) => d?._id === disease._id) === index
+    )
+    .map((disease) => ({ value: disease._id, label: disease.name })) || [];
 
-  const doctorOptions =
-    data
-      ?.flatMap((patient) => patient.doctors)
-      .filter(
-        (doctor, index, self) =>
-          self.findIndex((d) => d._id === doctor._id) === index
-      )
-      .map((doctor) => ({ value: doctor._id, label: doctor.name })) || [];
+  const doctorOptions = patients
+    ?.flatMap((patient) => patient.doctors)
+    .filter(
+      (doctor, index, self) =>
+        doctor && doctor._id && self.findIndex((d) => d?._id === doctor._id) === index
+    )
+    .map((doctor) => ({ value: doctor._id, label: doctor.name })) || [];
 
   return (
     <>
@@ -117,10 +105,8 @@ const CreatePatient: React.FC = () => {
                   data={diseaseOptions}
                   label="Diseases"
                   placeholder="Select diseases"
-                  value={field.value.map((disease: any) => disease._id)}
-                  onChange={(values) =>
-                    field.onChange(values.map((id) => ({ _id: id })))
-                  }
+                  value={field.value}
+                  onChange={(values) => field.onChange(values)}
                   error={
                     errors.diseases && "Please select at least one disease"
                   }
@@ -136,10 +122,8 @@ const CreatePatient: React.FC = () => {
                   data={doctorOptions}
                   label="Doctors"
                   placeholder="Select doctors"
-                  value={field.value.map((doctor: any) => doctor._id)}
-                  onChange={(values) =>
-                    field.onChange(values.map((id) => ({ _id: id })))
-                  }
+                  value={field.value}
+                  onChange={(values) => field.onChange(values)}
                   error={errors.doctors && "Please select at least one doctor"}
                 />
               )}

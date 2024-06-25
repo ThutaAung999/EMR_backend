@@ -1,5 +1,5 @@
 import express, {Router} from 'express';
-import {deleteEMR, getAllEMRs, getEMRById, newEMR, updateEMR} from "../controllers/EMRController";
+import {deleteEMR, getAllEMRs, getEMRById, newEMR, updateEMR} from "../controllers/emr.controller";
 
 const router: Router = express.Router()
 

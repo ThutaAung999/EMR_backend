@@ -7,7 +7,7 @@ import {
     getPatientById,
     newPatient,
     updatePatient
-} from '../controllers/PatientController';
+} from '../controllers/patient.controller';
 
 import { validateZodSchema} from '../middleware/validator.middleware'
 
