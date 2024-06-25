@@ -10,18 +10,9 @@ import Dashboard from "./components/dashboard.tsx";
 import MedicineList from "./features/medicine/components/MedicineList.tsx";
 import DiseaseList from "./features/diseases/components/DiseaseList.tsx";
 import EmrList from "./features/emrs/components/EmrList.tsx";
-import TagList from "./features/tags/components/TagList.tsx";
+import TagList1 from "./features/tags/components/TagList1.tsx";
 
 const queryClient = new QueryClient();
-
-<Routes>
-  {/*  <Route path="/" element={<Dashboard />} /> */}
-  <Route path="/patients" element={<PatientList />} />
-  <Route path="/medicines" element={<MedicineList />} />
-  <Route path="/diseases" element={<DiseaseList />} />
-  <Route path="/emrs" element={<EmrList />} />
-  <Route path="/tags" element={<TagList />} />
-</Routes>;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -95,7 +95,7 @@ const Sidebar: React.FC<{
               to={routes[item]}
               id="link-box"
               className={
-                "flex justify-start items-center gap-4 w-full cursor-pointer rounded-xl " +
+                "flex justify-start items-center gap-4 w-full cursor-pointer rounded-xl hover:bg-green-400 hover:text-white " +
                 (activeNavIndex === index
                   ? "bg-green-500 text-white"
                   : "text-green-900") +

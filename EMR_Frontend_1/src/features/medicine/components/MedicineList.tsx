@@ -20,9 +20,10 @@ export const MedicineList: React.FC = () => {
   const {data: diseases,error: diseasesError,isLoading: diseasesLoading} = useGetDiseases();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(null);
 
+  const [selectedMedicineId, setSelectedMedicineId] = useState<string | null>(null);
   const [ selectedMedicine, setSelectedMedicine] = useState<IMedicine | null>(null);
+
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");

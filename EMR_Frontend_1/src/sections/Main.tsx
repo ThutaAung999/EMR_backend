@@ -9,8 +9,9 @@ import PatientList from "../features/patients/components/PatientList";
 import DiseaseList from "../features/diseases/components/DiseaseList";
 import MedicineList from "../features/medicine/components/MedicineList";
 import EmrList from "../features/emrs/components/EmrList";
-import TagList from "../features/tags/components/TagList";
+import TagList1 from "../features/tags/components/TagList1";
 import { Route, Routes } from "react-router-dom";
+import TagList from "../features/tags/components/TagList";
 //import PatientWithProviders from "../features/patients/components/PatientWithProviders";
 
 const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
@@ -26,7 +27,7 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
         {navItems[activeNavIndex] === "Medicines" && <MedicineList />}  
         {navItems[activeNavIndex] === "Diseases" && <DiseaseList />}
         {navItems[activeNavIndex] === "EMRs" && <EmrList />}
-        {navItems[activeNavIndex] === "Tags" && <TagList />}
+        {navItems[activeNavIndex] === "Tags" && <TagList1 />}
        */}
         <Routes>
           <Route path="/" element={<Dashboard />} />
