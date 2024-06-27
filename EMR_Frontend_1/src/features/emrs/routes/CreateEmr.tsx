@@ -9,8 +9,6 @@ import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import axios from "axios";
 
-import { MdAddCircle } from 'react-icons/md';
-
 const CreateEmr: React.FC = () => {
   const {
     control,
@@ -51,6 +49,7 @@ const CreateEmr: React.FC = () => {
 
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
 
+  
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -61,15 +60,14 @@ const CreateEmr: React.FC = () => {
     });
 
     try {
-      const res = await axios.post("http://localhost:5000/upload", formData, {
+      const res = await axios.post("http://localhost:9999/api/emrs/uploads", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data",
         },
-      });
-
-      const { images } = res.data; // Assume the response contains an array of uploaded image URLs
-      const newImages: EmrImage[] = images.map((image: string) => ({
-        image,
+    });
+      const { images } = res.data;
+      const newImages: EmrImage[] = images.map((image: { image: string }) => ({
+        image: image.image,
         tags: [],
       }));
       setUploadedImages((prev) => [...prev, ...newImages]);
@@ -127,6 +125,34 @@ const CreateEmr: React.FC = () => {
           encType="multipart/form-data"
         >
           <Stack>
+            <Controller
+                name="emrImages"
+                control={control}
+                render={({ field }) => (
+                    <div>
+                      <input
+                          type="file"
+                          multiple
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            field.onChange(uploadedImages);
+                          }}
+                      />
+                      <div className="mt-2">
+                        {uploadedImages.map((image, index) => (
+                            <div key={index}>
+                              <img
+                                  src={`/api/emrs/${image.image}`}
+                                  alt="Uploaded"
+                                  style={{ width: "100px", margin: "10px" }}
+                              />
+                            </div>
+                        ))}
+                      </div>
+                    </div>
+                )}
+            />
+
             <Controller
               name="diseases"
               control={control}
@@ -195,33 +221,7 @@ const CreateEmr: React.FC = () => {
               )}
             />
 
-            <Controller
-              name="emrImages"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={(e) => {
-                      handleImageUpload(e);
-                      field.onChange(uploadedImages);
-                    }}
-                  />
-                  <div className="mt-2">
-                    {uploadedImages.map((image, index) => (
-                      <div key={index}>
-                        <img
-                          src={`http://localhost:5000/${image.image}`}
-                          alt="Uploaded"
-                          style={{ width: "100px", margin: "10px" }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            />
+
 
             <div className="flex flex-row gap-6 justify-end">
               <Button onClick={close}>Cancel</Button>

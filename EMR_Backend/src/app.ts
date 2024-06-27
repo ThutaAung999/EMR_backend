@@ -1,7 +1,7 @@
 import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
-import helmet from 'helmet'
+import helmet from 'helmet';
 //import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import mongoose from 'mongoose';
@@ -15,16 +15,15 @@ import medicineRouter from './routes/medicines.route';
 import diseaseRouter from './routes/diseases.route';
 import doctorRouter from './routes/doctors.route';
 import tagRouter from './routes/tags.route';
-import emrImageRouter from './routes/emr.images.route'
+import emrImageRouter from './routes/emr.images.route';
 import emrRouter from './routes/emr.route';
-
 
 //import auth from './middleware/auth';
 import config from './config/database';
 
 //import setupRoutes from "./routes";
 
-import HttpLoggerMiddleware from './middleware/http.logger.middleware'
+import HttpLoggerMiddleware from './middleware/http.logger.middleware';
 
 dotenv.config();
 
@@ -34,46 +33,49 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-
 /********************/
 // Configure CORS
 const corsOptions = {
-    origin: ['http://localhost:5000', 'http://localhost:5174'],  // Allow requests from this origin
-    optionsSuccessStatus: 200 // For legacy browser support
+    origin: ['http://localhost:5000',
+        'http://localhost:9999',
+        'http://localhost:5174',
+    ], // Allow requests from this origin
+    optionsSuccessStatus: 200, // For legacy browser support
 };
 app.use(cors(corsOptions)); // Use cors middleware with options
 
 app.use(helmet());
-app.use(express.json());//this is bodyParser.json()
+app.use(express.json()); //this is bodyParser.json()
 app.use(express.urlencoded({ extended: true }));
 
-app.use(HttpLoggerMiddleware)
+app.use(HttpLoggerMiddleware);
 
 //app.use(cookieParser());
 
-
 /************************/
 
-mongoose.connect(config.db).then(() => console.log('MongoDB connected!'))
-    .catch(err => console.log(err));
+mongoose
+    .connect(config.db)
+    .then(() => console.log('MongoDB connected!'))
+    .catch((err) => console.log(err));
 
 /************************/
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    /*destination: function (req, file, cb) {
         cb(null, path.join(__dirname, 'public', 'images'));
-    },
-
+    },*/
+    destination: './uploads/',
     filename: function (req, file, cb) {
         let date = new Date();
         let imageFileName = date.getTime() + '_' + file.originalname;
         req.body.imageFileName = imageFileName;
         cb(null, imageFileName);
-    }
+    },
 });
 
 const upload = multer({
-    storage: storage
+    storage: storage,
 }).any();
 
 // Initialize upload
@@ -86,14 +88,12 @@ const upload = multer({
         checkFileType(file, cb);
     }
 }).single('image');
-
 */
 
 // Check file type
-
 /*
 function checkFileType(file :any , cb :any) {
-    const filetypes = /jpeg|jpg|png|gif/;
+    const filetypes = /jpeg|jpg|png|gif|jfif/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
@@ -105,99 +105,36 @@ function checkFileType(file :any , cb :any) {
 }
 */
 
+//app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/api/emrs/uploads', express.static('uploads'));
 
+// Route
 
-app.use(upload);
-
-// Routes
-app.post('/emrs', (req, res) => {
-    upload(req, res, (err) => {
-        if (err) {
-            res.status(400).json({ msg: err });
-        } else {
-            if (req.file == undefined) {
-                res.status(400).json({ msg: 'No file selected!' });
-            } else {
-                res.status(200).json({
-                    msg: 'File uploaded!',
-                    file: `uploads/${req.file.filename}`
-                });
-            }
-        }
-    });
-});
-
-//--------------------------------------------------------
-
-// Set storage engine
-/*
-const storage = multer.diskStorage({
-    destination: './uploads/',
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-// Initialize upload
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1000000 }, // 1MB file size limit
-    fileFilter: (req, file, cb) => {
-        checkFileType(file, cb);
-    }
-}).single('image');
-
-// Check file type
-function checkFileType(file :any, cb :any) {
-    const filetypes = /jpeg|jpg|png|gif|jfif|tiff/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
+app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
+    if (req.files === undefined || req.files.length === 0) {
+        res.status(400).json({ msg: 'No file selected!' });
     } else {
-        cb('Error: Images Only!');
+        const uploadedFiles = (req.files as Express.Multer.File[]).map((file) => ({
+            image: `uploads/${file.filename}`,
+        }));
+        res.status(200).json({
+            msg: 'Files uploaded!',
+            images: uploadedFiles,
+        });
     }
-}
-
-// Public folder
-app.use('/uploads', express.static('uploads'));
-
-// Routes
-app.post('/emrs', (req, res) => {
-    upload(req, res, (err) => {
-        if (err) {
-            res.status(400).json({ msg: err });
-        } else {
-            if (req.file == undefined) {
-                res.status(400).json({ msg: 'No file selected!' });
-            } else {
-                res.status(200).json({
-                    msg: 'File uploaded!',
-                    file: `uploads/${req.file.filename}`
-                });
-            }
-        }
-    });
 });
 
-
-
-*/
 /******************/
 
 //setupRoutes(app);
 app.use('/api/patients', patientRouter);
-app.use('/api/medicines',medicineRouter);
-app.use('/api/diseases',diseaseRouter);
-app.use('/api/doctors',doctorRouter);
-app.use('/api/tags',tagRouter);
-app.use("/api/emrImages",emrImageRouter);
-app.use("/api/emrs",emrRouter);
-
-
+app.use('/api/medicines', medicineRouter);
+app.use('/api/diseases', diseaseRouter);
+app.use('/api/doctors', doctorRouter);
+app.use('/api/tags', tagRouter);
+app.use('/api/emrImages', emrImageRouter);
+app.use('/api/emrs', emrRouter);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -206,7 +143,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.log("Server Error: ", err); // Ensure this logs the error details
+    console.log('Server Error: ', err); // Ensure this logs the error details
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
