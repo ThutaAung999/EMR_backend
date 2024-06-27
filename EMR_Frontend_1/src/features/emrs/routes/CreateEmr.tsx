@@ -1,13 +1,14 @@
 import React, { useState, useRef } from "react";
 import { Button, MultiSelect, Stack, Textarea } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
-import { IEmrDTO, EmrImage } from "../model/emr.model"; // Ensure EmrImage is imported
+import { IEmrDTO, EmrImage } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
 import useGetEmrs from "../api/get-all-emrs";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import axios from "axios";
+import { FaPlus } from "react-icons/fa";
 
 const CreateEmr: React.FC = () => {
   const {
@@ -65,11 +66,15 @@ const CreateEmr: React.FC = () => {
     });
 
     try {
-      const res = await axios.post("http://localhost:9999/api/emrs/uploads", formData, {
-        headers: {
+      const res = await axios.post(
+        "http://localhost:9999/api/emrs/uploads",
+        formData,
+        {
+          headers: {
             "Content-Type": "multipart/form-data",
-        },
-      });
+          },
+        }
+      );
       const { images } = res.data;
       const newImages: EmrImage[] = images.map((image: { image: string }) => ({
         image: image.image,
@@ -135,10 +140,17 @@ const CreateEmr: React.FC = () => {
               control={control}
               render={({ field }) => (
                 <div>
+                  <Button
+                    leftIcon={<FaPlus />}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Add Item
+                  </Button>
                   <input
                     type="file"
                     multiple
                     ref={fileInputRef} // Attach ref to file input
+                    style={{ display: "none" }} // Hide the default file input
                     onChange={(e) => {
                       handleImageUpload(e);
                       field.onChange(uploadedImages);
@@ -148,7 +160,7 @@ const CreateEmr: React.FC = () => {
                     {uploadedImages.map((image, index) => (
                       <div key={index}>
                         <img
-                          src={`/api/emrs/uploads${image.image}`}
+                          src={`http://localhost:9999/${image.image}`} // Correct image path
                           alt="Uploaded"
                           style={{ width: "100px", margin: "10px" }}
                         />
@@ -227,7 +239,7 @@ const CreateEmr: React.FC = () => {
               )}
             />
 
-            <div className="flex flex-row gap-6 justify-end"> 
+            <div className="flex flex-row gap-6 justify-end">
               <Button onClick={close}>Cancel</Button>
               <Button type="submit">Save</Button>
             </div>

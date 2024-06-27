@@ -1,8 +1,11 @@
+
+//import auth from './middleware/auth';
+import config from './config/database';
+
 import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import helmet from 'helmet';
-//import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import mongoose from 'mongoose';
 import multer from 'multer';
@@ -18,11 +21,6 @@ import tagRouter from './routes/tags.route';
 import emrImageRouter from './routes/emr.images.route';
 import emrRouter from './routes/emr.route';
 
-//import auth from './middleware/auth';
-import config from './config/database';
-
-//import setupRoutes from "./routes";
-
 import HttpLoggerMiddleware from './middleware/http.logger.middleware';
 
 dotenv.config();
@@ -36,36 +34,36 @@ app.set('view engine', 'jade');
 /********************/
 // Configure CORS
 const corsOptions = {
-    origin: ['http://localhost:5000',
-        'http://localhost:9999',
-        'http://localhost:5174',
-    ], // Allow requests from this origin
+    origin: ['http://localhost:5000', 'http://localhost:9999', 'http://localhost:5174'], // Allow requests from these origins
     optionsSuccessStatus: 200, // For legacy browser support
+    credentials: true,
 };
 app.use(cors(corsOptions)); // Use cors middleware with options
 
-app.use(helmet());
-app.use(express.json()); //this is bodyParser.json()
+app.use(
+    helmet({
+        crossOriginResourcePolicy: false,
+    })
+);
+
+app.use(express.json()); // This is bodyParser.json()
 app.use(express.urlencoded({ extended: true }));
 
 app.use(HttpLoggerMiddleware);
 
-//app.use(cookieParser());
-
-/************************/
-
+// Database connection
 mongoose
     .connect(config.db)
     .then(() => console.log('MongoDB connected!'))
     .catch((err) => console.log(err));
 
-/************************/
-
-const uploadDir = './uploads/';
+// Ensure upload directory exists
+const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+// Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadDir);
@@ -73,18 +71,13 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         let date = new Date();
         let imageFileName = date.getTime() + '_' + file.originalname;
-        req.body.imageFileName = imageFileName;
         cb(null, imageFileName);
     },
 });
 
-const upload = multer({
-    storage: storage,
-}).any();
+const upload = multer({ storage }).any();
 
-// Initialize upload
-
-// Route
+// Route to handle file uploads
 app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
     if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
         return res.status(400).json({ msg: 'No file selected!' });
@@ -100,9 +93,10 @@ app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
     }
 });
 
-/******************/
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(uploadDir));
 
-//setupRoutes(app);
+// Routes
 app.use('/api/patients', patientRouter);
 app.use('/api/medicines', medicineRouter);
 app.use('/api/diseases', diseaseRouter);
@@ -119,11 +113,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.log('Server Error: ', err); // Ensure this logs the error details
-    // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-    // render the error page
     res.status(err.status || 500);
     res.render('error');
 });
