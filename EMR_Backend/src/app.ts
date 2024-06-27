@@ -49,10 +49,144 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(HttpLoggerMiddleware)
 
+//app.use(cookieParser());
+
+
 /************************/
 
 mongoose.connect(config.db).then(() => console.log('MongoDB connected!'))
     .catch(err => console.log(err));
+
+/************************/
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, 'public', 'images'));
+    },
+
+    filename: function (req, file, cb) {
+        let date = new Date();
+        let imageFileName = date.getTime() + '_' + file.originalname;
+        req.body.imageFileName = imageFileName;
+        cb(null, imageFileName);
+    }
+});
+
+const upload = multer({
+    storage: storage
+}).any();
+
+// Initialize upload
+
+/*
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 }, // 1MB file size limit
+    fileFilter: (req, file, cb) => {
+        checkFileType(file, cb);
+    }
+}).single('image');
+
+*/
+
+// Check file type
+
+/*
+function checkFileType(file :any , cb :any) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb('Error: Images Only!');
+    }
+}
+*/
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(upload);
+
+// Routes
+app.post('/emrs', (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            res.status(400).json({ msg: err });
+        } else {
+            if (req.file == undefined) {
+                res.status(400).json({ msg: 'No file selected!' });
+            } else {
+                res.status(200).json({
+                    msg: 'File uploaded!',
+                    file: `uploads/${req.file.filename}`
+                });
+            }
+        }
+    });
+});
+
+//--------------------------------------------------------
+
+// Set storage engine
+/*
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+// Initialize upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 }, // 1MB file size limit
+    fileFilter: (req, file, cb) => {
+        checkFileType(file, cb);
+    }
+}).single('image');
+
+// Check file type
+function checkFileType(file :any, cb :any) {
+    const filetypes = /jpeg|jpg|png|gif|jfif|tiff/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb('Error: Images Only!');
+    }
+}
+
+// Public folder
+app.use('/uploads', express.static('uploads'));
+
+// Routes
+app.post('/emrs', (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            res.status(400).json({ msg: err });
+        } else {
+            if (req.file == undefined) {
+                res.status(400).json({ msg: 'No file selected!' });
+            } else {
+                res.status(200).json({
+                    msg: 'File uploaded!',
+                    file: `uploads/${req.file.filename}`
+                });
+            }
+        }
+    });
+});
+
+
+
+*/
+/******************/
 
 //setupRoutes(app);
 app.use('/api/patients', patientRouter);

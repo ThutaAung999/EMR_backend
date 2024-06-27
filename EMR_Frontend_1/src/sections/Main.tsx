@@ -8,10 +8,12 @@ import Footer from "../components/Footer";
 import PatientList from "../features/patients/components/PatientList";
 import DiseaseList from "../features/diseases/components/DiseaseList";
 import MedicineList from "../features/medicine/components/MedicineList";
-import EmrList from "../features/emrs/components/EmrList";
-import TagList1 from "../features/tags/components/TagList1";
+import {EmrList} from "../features/emrs/components/EmrList";
+
 import { Route, Routes } from "react-router-dom";
 import TagList from "../features/tags/components/TagList";
+import ImageUpload from "../features/emrs/routes/ImageUpload";
+import CreateEmr from "../features/emrs/routes/CreateEmr";
 //import PatientWithProviders from "../features/patients/components/PatientWithProviders";
 
 const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
@@ -39,6 +41,11 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
         </Routes>
       </div>
       <Footer />
+
+      <div className="w-full flex-grow flex flex-col justify-start items-start gap-2 p-4">
+        
+        <CreateEmr/>
+      </div>
     </section>
   );
 };
