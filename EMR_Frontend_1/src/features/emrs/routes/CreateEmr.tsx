@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Button, MultiSelect, Stack, Textarea } from "@mantine/core";
+import { Button, MultiSelect, Stack, Textarea, Modal, TextInput } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import { IEmrDTO, EmrImage } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
@@ -55,6 +55,8 @@ const CreateEmr: React.FC = () => {
   });
 
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -78,9 +80,11 @@ const CreateEmr: React.FC = () => {
       const { images } = res.data;
       const newImages: EmrImage[] = images.map((image: { image: string }) => ({
         image: image.image,
-        tags: [],
+        tags: selectedTags, // Add selected tags to the uploaded image
       }));
       setUploadedImages((prev) => [...prev, ...newImages]);
+      setSelectedTags([]); // Reset tags after saving
+      setModalOpen(false); // Close modal after saving
     } catch (err) {
       console.error(err);
     }
@@ -142,20 +146,10 @@ const CreateEmr: React.FC = () => {
                 <div>
                   <Button
                     leftIcon={<FaPlus />}
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => setModalOpen(true)}
                   >
                     Add Item
                   </Button>
-                  <input
-                    type="file"
-                    multiple
-                    ref={fileInputRef} // Attach ref to file input
-                    style={{ display: "none" }} // Hide the default file input
-                    onChange={(e) => {
-                      handleImageUpload(e);
-                      field.onChange(uploadedImages);
-                    }}
-                  />
                   <div className="mt-2">
                     {uploadedImages.map((image, index) => (
                       <div key={index}>
@@ -246,6 +240,44 @@ const CreateEmr: React.FC = () => {
           </Stack>
         </form>
       </div>
+
+      <Modal
+        opened={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Upload Image and Add Tags"
+      >
+        <Stack>
+          <Button onClick={() => fileInputRef.current?.click()}>
+            Add Photo
+          </Button>
+          <input
+            type="file"
+            multiple
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
+          <MultiSelect
+            data={diseaseOptions} // Use diseaseOptions as tag options or create a new options array
+            label="Tags"
+            placeholder="Select tags"
+            value={selectedTags}
+            onChange={setSelectedTags}
+          />
+          <div className="flex flex-row gap-6 justify-end mt-4">
+            <Button onClick={() => setModalOpen(false)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                if (fileInputRef.current?.files) {
+                  handleImageUpload({ target: fileInputRef.current });
+                }
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        </Stack>
+      </Modal>
     </section>
   );
 };
