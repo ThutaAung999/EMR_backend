@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Button, MultiSelect, Stack, Textarea, Modal, TextInput } from "@mantine/core";
+import { Button, MultiSelect, Stack, Textarea, Modal } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import { IEmrDTO, EmrImage } from "../model/emr.model";
 import { useCreateEmr } from "../api/create-emr";
@@ -9,6 +9,7 @@ import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import axios from "axios";
 import { FaPlus } from "react-icons/fa";
+import { useGetTags } from "../../tags/api/get-all-tags";
 
 const CreateEmr: React.FC = () => {
   const {
@@ -45,6 +46,8 @@ const CreateEmr: React.FC = () => {
     isLoading: patientIsLoading,
   } = useGetPatients();
 
+  const { data: tags, error: tagError, isLoading: tagIsLoading } = useGetTags();
+
   const mutation = useCreateEmr(() => {
     close();
     reset();
@@ -58,8 +61,7 @@ const CreateEmr: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleImageUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     const formData = new FormData();
@@ -95,9 +97,15 @@ const CreateEmr: React.FC = () => {
     mutation.mutate(data);
   };
 
-  if (isLoading || diseaseIsLoading || medicineIsLoading || patientIsLoading)
+  if (
+    isLoading ||
+    diseaseIsLoading ||
+    medicineIsLoading ||
+    patientIsLoading ||
+    tagIsLoading
+  )
     return <div>Loading...</div>;
-  if (error || diseaseError || medicineError || patientError)
+  if (error || diseaseError || medicineError || patientError || tagError)
     return <div>Error</div>;
 
   const diseaseOptions =
@@ -129,6 +137,25 @@ const CreateEmr: React.FC = () => {
           self.findIndex((d) => d?._id === medicine._id) === index
       )
       .map((medicine) => ({ value: medicine._id, label: medicine.name })) || [];
+
+  const tagsOptions =
+    tags
+      ?.filter(
+        (tag, index, self) =>
+          tag &&
+          tag._id &&
+          self.findIndex((t) => t?._id === tag._id) === index
+      )
+      .map((tag) => ({ value: tag._id, label: tag.name })) || [];
+
+
+       // CSS class for the dropdown container to add scrollbar
+  const dropdownStyles = {
+    dropdown: {
+      maxHeight: "80px", // Adjust as needed
+      overflowY: "auto",
+    },
+  };
 
   return (
     <section className="h-full w-full">
@@ -255,21 +282,22 @@ const CreateEmr: React.FC = () => {
             multiple
             ref={fileInputRef}
             style={{ display: "none" }}
-            onChange={handleImageUpload}
+            onChange={(e) => handleImageUpload(e.target.files)}
           />
           <MultiSelect
-            data={diseaseOptions} // Use diseaseOptions as tag options or create a new options array
+            data={tagsOptions} // Use diseaseOptions as tag options or create a new options array
             label="Tags"
             placeholder="Select tags"
             value={selectedTags}
             onChange={setSelectedTags}
+            styles={dropdownStyles} 
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={() => setModalOpen(false)}>Cancel</Button>
             <Button
               onClick={() => {
                 if (fileInputRef.current?.files) {
-                  handleImageUpload({ target: fileInputRef.current });
+                  handleImageUpload(fileInputRef.current.files);
                 }
               }}
             >
