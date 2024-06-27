@@ -61,11 +61,15 @@ mongoose
 
 /************************/
 
+const uploadDir = './uploads/';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-    /*destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, 'public', 'images'));
-    },*/
-    destination: './uploads/',
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
     filename: function (req, file, cb) {
         let date = new Date();
         let imageFileName = date.getTime() + '_' + file.originalname;
@@ -80,45 +84,16 @@ const upload = multer({
 
 // Initialize upload
 
-/*
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1000000 }, // 1MB file size limit
-    fileFilter: (req, file, cb) => {
-        checkFileType(file, cb);
-    }
-}).single('image');
-*/
-
-// Check file type
-/*
-function checkFileType(file :any , cb :any) {
-    const filetypes = /jpeg|jpg|png|gif|jfif/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
-    } else {
-        cb('Error: Images Only!');
-    }
-}
-*/
-
-//app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/api/emrs/uploads', express.static('uploads'));
-
 // Route
-
 app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
-    if (req.files === undefined || req.files.length === 0) {
-        res.status(400).json({ msg: 'No file selected!' });
+    if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+        return res.status(400).json({ msg: 'No file selected!' });
     } else {
         const uploadedFiles = (req.files as Express.Multer.File[]).map((file) => ({
             image: `uploads/${file.filename}`,
         }));
-        res.status(200).json({
+
+        return res.status(200).json({
             msg: 'Files uploaded!',
             images: uploadedFiles,
         });

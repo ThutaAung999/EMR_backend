@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, MultiSelect, Stack, Textarea, TextInput } from "@mantine/core";
+import React, { useState, useRef } from "react";
+import { Button, MultiSelect, Stack, Textarea } from "@mantine/core";
 import { Controller, useForm } from "react-hook-form";
 import { IEmrDTO, EmrImage } from "../model/emr.model"; // Ensure EmrImage is imported
 import { useCreateEmr } from "../api/create-emr";
@@ -25,6 +25,8 @@ const CreateEmr: React.FC = () => {
     },
   });
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const { data: emrs, error, isLoading } = useGetEmrs();
   const {
     data: diseases,
@@ -45,11 +47,14 @@ const CreateEmr: React.FC = () => {
   const mutation = useCreateEmr(() => {
     close();
     reset();
+    setUploadedImages([]); // Clear uploaded images
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input
+    }
   });
 
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
 
-  
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -64,7 +69,7 @@ const CreateEmr: React.FC = () => {
         headers: {
             "Content-Type": "multipart/form-data",
         },
-    });
+      });
       const { images } = res.data;
       const newImages: EmrImage[] = images.map((image: { image: string }) => ({
         image: image.image,
@@ -126,31 +131,32 @@ const CreateEmr: React.FC = () => {
         >
           <Stack>
             <Controller
-                name="emrImages"
-                control={control}
-                render={({ field }) => (
-                    <div>
-                      <input
-                          type="file"
-                          multiple
-                          onChange={(e) => {
-                            handleImageUpload(e);
-                            field.onChange(uploadedImages);
-                          }}
-                      />
-                      <div className="mt-2">
-                        {uploadedImages.map((image, index) => (
-                            <div key={index}>
-                              <img
-                                  src={`/api/emrs/${image.image}`}
-                                  alt="Uploaded"
-                                  style={{ width: "100px", margin: "10px" }}
-                              />
-                            </div>
-                        ))}
+              name="emrImages"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <input
+                    type="file"
+                    multiple
+                    ref={fileInputRef} // Attach ref to file input
+                    onChange={(e) => {
+                      handleImageUpload(e);
+                      field.onChange(uploadedImages);
+                    }}
+                  />
+                  <div className="mt-2">
+                    {uploadedImages.map((image, index) => (
+                      <div key={index}>
+                        <img
+                          src={`/api/emrs/uploads${image.image}`}
+                          alt="Uploaded"
+                          style={{ width: "100px", margin: "10px" }}
+                        />
                       </div>
-                    </div>
-                )}
+                    ))}
+                  </div>
+                </div>
+              )}
             />
 
             <Controller
@@ -221,9 +227,7 @@ const CreateEmr: React.FC = () => {
               )}
             />
 
-
-
-            <div className="flex flex-row gap-6 justify-end">
+            <div className="flex flex-row gap-6 justify-end"> 
               <Button onClick={close}>Cancel</Button>
               <Button type="submit">Save</Button>
             </div>
