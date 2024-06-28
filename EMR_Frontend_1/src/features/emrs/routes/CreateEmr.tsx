@@ -275,7 +275,7 @@ const CreateEmr: React.FC = () => {
             />
 
             <div className="flex flex-row gap-6 justify-end">
-              <Button onClick={close}>Cancel</Button>
+              <Button onClick={() => navigate("/emrs")}>Cancel</Button>
               <Button type="submit">Save</Button>
             </div>
           </Stack>

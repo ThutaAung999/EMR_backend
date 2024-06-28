@@ -10,7 +10,7 @@ import { useGetTags } from "../../tags/api/get-all-tags";
 import axios from "axios";
 import { FaPlus } from "react-icons/fa";
 
-interface UpdateEmrProps {
+export interface UpdateEmrProps {
   emr: IEmrDTO;
   closeModal: () => void;
 }
