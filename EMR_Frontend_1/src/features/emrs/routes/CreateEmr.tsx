@@ -64,12 +64,20 @@ const CreateEmr: React.FC = () => {
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-  const handleImageUpload = async (files: FileList | null) => {
+  const handleImageSelect = (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
+    const fileArray = Array.from(files);
+    setSelectedFiles(fileArray);
+  };
+
+  const handleImageUpload = async () => {
+    if (selectedFiles.length === 0) return;
+
     const formData = new FormData();
-    Array.from(files).forEach((file) => {
+    selectedFiles.forEach((file) => {
       formData.append("image", file);
     });
 
@@ -91,6 +99,7 @@ const CreateEmr: React.FC = () => {
       setUploadedImages((prev) => [...prev, ...newImages]);
       setSelectedTags([]); // Reset tags after saving
       setModalOpen(false); // Close modal after saving
+      setSelectedFiles([]); // Clear selected files
     } catch (err) {
       console.error(err);
     }
@@ -175,20 +184,20 @@ const CreateEmr: React.FC = () => {
               render={({ field }) => (
                 <div className="flex flex-row items-center">
                   <Button
-                  
                     leftIcon={<FaPlus />}
                     onClick={() => setModalOpen(true)}
                   >
                     Add Item
                   </Button>
-                  
-                  <div className="mt-2 flex flex-row items-center  w-30 h-30 rounded-full">
+
+                  <div className="mt-2 flex flex-row items-center w-30 h-30 rounded-full">
                     {uploadedImages.map((image, index) => (
                       <div key={index}>
                         <img
                           src={`http://localhost:9999/${image.image}`} // Correct image path
                           alt="Uploaded"
-                          style={{ width: "100px", margin: "10px" }}
+                          className="w-24 h-24 rounded-full"
+                          style={{ margin: "10px" }}
                         />
                       </div>
                     ))}
@@ -276,7 +285,7 @@ const CreateEmr: React.FC = () => {
       <Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
-        title="Upload Image and  Tags"
+        title="Upload Image and Tags"
       >
         <Stack>
           <Button onClick={() => fileInputRef.current?.click()}>
@@ -287,11 +296,20 @@ const CreateEmr: React.FC = () => {
             multiple
             ref={fileInputRef}
             style={{ display: "none" }}
-            // onChange={(e) => handleImageUpload(e.target.files)}
+            onChange={(e) => handleImageSelect(e.target.files)}
           />
-
+          <div className="mt-4 flex flex-row flex-wrap gap-4">
+            {selectedFiles.map((file, index) => (
+              <img
+                key={index}
+                src={URL.createObjectURL(file)}
+                alt="Selected"
+                className="w-48 h-48 "
+              />
+            ))}
+          </div>
           <MultiSelect
-            data={tagsOptions} // Use diseaseOptions as tag options or create a new options array
+            data={tagsOptions}
             label="Tags"
             placeholder="Select tags"
             value={selectedTags}
@@ -300,15 +318,7 @@ const CreateEmr: React.FC = () => {
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button
-              onClick={() => {
-                if (fileInputRef.current?.files) {
-                  handleImageUpload(fileInputRef.current.files);
-                }
-              }}
-            >
-              Save
-            </Button>
+            <Button onClick={handleImageUpload}>Save</Button>
           </div>
         </Stack>
       </Modal>

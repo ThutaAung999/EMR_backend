@@ -12,17 +12,27 @@ import UpdatePatient from "./UpdatePatient";
 import Pagination from "../../../reusable-components/Pagination";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
+import { NavLink } from "react-router-dom";
 
 export const PatientList: React.FC = () => {
-
   const { data, error, isLoading } = useGetPatients();
   const mutationDelete = useDeletePatient();
 
-  const { data: diseases, error: diseasesError, isLoading: diseasesLoading } = useGetDiseases();
-  const { data: doctors, error: doctorsError, isLoading: doctorsLoading } = useGetDoctors();
+  const {
+    data: diseases,
+    error: diseasesError,
+    isLoading: diseasesLoading,
+  } = useGetDiseases();
+  const {
+    data: doctors,
+    error: doctorsError,
+    isLoading: doctorsLoading,
+  } = useGetDoctors();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
+    null
+  );
 
   const [selectedPatient, setSelectedPatient] = useState<IPatient | null>(null);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
@@ -37,10 +47,21 @@ export const PatientList: React.FC = () => {
     initialPage: 1,
   });
 
-  if (isLoading || diseasesLoading || doctorsLoading) return <div>Loading...</div>;
+  if (isLoading || diseasesLoading || doctorsLoading)
+    return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
-  if (diseasesError) return <div>An error occurred while fetching diseases: {diseasesError.message}</div>;
-  if (doctorsError) return <div>An error occurred while fetching doctors: {doctorsError.message}</div>;
+  if (diseasesError)
+    return (
+      <div>
+        An error occurred while fetching diseases: {diseasesError.message}
+      </div>
+    );
+  if (doctorsError)
+    return (
+      <div>
+        An error occurred while fetching doctors: {doctorsError.message}
+      </div>
+    );
 
   const filterPatients = (patients: IPatient[]) => {
     return patients.filter((patient) => {
@@ -92,40 +113,44 @@ export const PatientList: React.FC = () => {
     setSelectedPatient(patient);
     setUpdateModalOpen(true);
   };
-  
-  const rows = currentData?.map((patient) => {
-    const patientDiseases = mapIdsToDiseases(
-      (patient.diseases ?? []).map((d) => d._id),
-      diseases || []
-    );
-    const patientDoctors = mapIdsToDoctors(
-      (patient.doctors ?? []).map((d) => d._id),
-      doctors || []
-    );
 
-    return (
-      <tr key={patient._id}>
-        <td>{patient.name}</td>
-        <td>{patient.age}</td>
-        <td>{patientDiseases.map((disease) => disease.name).join(", ")}</td>
-        <td>{patientDoctors.map((doctor) => doctor.name).join(", ")}</td>
-        <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-          <Button
-            className="text-white bg-red-600"
-            onClick={() => handleDelete(patient._id )}
-          >
-            <IconTrash size={16} />
-          </Button>
-          <Button
-            className="text-black bg-yellow-300 mx-6"
-            onClick={() => handleUpdate(patient)}
-          >
-            <IconEdit size={16} />
-          </Button>
-        </td>
-      </tr>
-    );
-  }) || [];
+  const rows =
+    currentData?.map((patient) => {
+      const patientDiseases = mapIdsToDiseases(
+        (patient.diseases ?? []).map((d) => d._id),
+        diseases || []
+      );
+      const patientDoctors = mapIdsToDoctors(
+        (patient.doctors ?? []).map((d) => d._id),
+        doctors || []
+      );
+
+      return (
+        <tr key={patient._id}>
+          <td>{patient.name}</td>
+          <td>{patient.age}</td>
+          <td>{patientDiseases.map((disease) => disease.name).join(", ")}</td>
+          <td>{patientDoctors.map((doctor) => doctor.name).join(", ")}</td>
+          <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+            <Button
+              className="text-white bg-red-600"
+              onClick={() => handleDelete(patient._id)}
+            >
+              <IconTrash size={16} />
+            </Button>
+
+            <NavLink to="/patients/create">
+              <Button
+                className="text-black bg-yellow-300 mx-6"
+                onClick={() => handleUpdate(patient)}
+              >
+                <IconEdit size={16} />
+              </Button>
+            </NavLink>
+          </td>
+        </tr>
+      );
+    }) || [];
 
   return (
     <section className="h-full w-full">

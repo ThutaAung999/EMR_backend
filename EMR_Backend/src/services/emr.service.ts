@@ -4,7 +4,9 @@ export const getAllEMR = async () : Promise<IEMR[]> =>{
     return EmrModel.find().
         populate("diseases").
         populate("medicines").
-        populate("patients").exec();
+        populate("patients").
+        populate('emrImages.tags').
+    exec();
 }
 
 export const getEMRById = async (emrId : string) : Promise<IEMR | null> =>{

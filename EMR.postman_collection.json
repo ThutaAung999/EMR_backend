@@ -528,7 +528,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Doctor_1\",\r\n    \"specialty\": \"Liver Specialist\"    \r\n}",
+							"raw": "{\r\n    \"name\": \"Doctor_2\",\r\n    \"specialty\": \"Heart Specialist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -822,7 +822,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"patients\":[\"666aa6ea7bd4602baec6554c\"],\r\n    \"doctors\":[\"666bf876f739fd0dcdb2dcdc\"],\r\n    \"diseases\":[\"666bedc68f894f3fd7c8b859\"],\r\n    \"medicines\":[\"666bc9cf25f2d35f4784ccce\"],\r\n    \"emrImages\":[\"666c0bc96ce7e6781c486175\"],\r\n    \"notes\":\"This is note for EMR....\"\r\n    \r\n}",
+							"raw": "{\r\n    \"patients\":[\"666aa6ea7bd4602baec6554c\"],    \r\n    \"diseases\":[\"666bedc68f894f3fd7c8b859\"],\r\n    \"medicines\":[\"666bc9cf25f2d35f4784ccce\"],\r\n    \"emrImages\":[\"666c0bc96ce7e6781c486175\"],\r\n    \"notes\":\"This is note for EMR1....\"\r\n    \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

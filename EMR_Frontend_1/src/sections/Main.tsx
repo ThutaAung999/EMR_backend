@@ -14,6 +14,9 @@ import { Route, Routes } from "react-router-dom";
 import TagList from "../features/tags/components/TagList";
 import ImageUpload from "../features/emrs/routes/ImageUpload";
 import CreateEmr from "../features/emrs/routes/CreateEmr";
+import UpdateEmr from "../features/emrs/routes/UpdateEmr";
+import CreatePatient from "../features/patients/components/CreatePatient";
+import ParentComponent from "../features/emrs/routes/ParentComponent";
 //import PatientWithProviders from "../features/patients/components/PatientWithProviders";
 
 const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
@@ -34,14 +37,20 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/patients" element={<PatientList />} />
+          <Route path="/patients/create" element={<CreatePatient />} />
           <Route path="/medicines" element={<MedicineList />} />
           <Route path="/diseases" element={<DiseaseList />} />
           <Route path="/emrs" element={<EmrList />} />
           <Route path="/emrs/create" element={<CreateEmr />} />
+          
+
           <Route path="/tags" element={<TagList />} />
         </Routes>
       </div>
       <Footer />
+      {/* <div className="w-full  flex flex-col justify-start  gap-2 p-4">
+      <ParentComponent/>
+      </div> */}
     </section>
   );
 };
