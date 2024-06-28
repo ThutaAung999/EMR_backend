@@ -20,6 +20,7 @@ export interface EmrImage {
   };
 
 export type IEmrDTO = {
+    _id: string; 
     patients: string[];
     diseases: string[];
     medicines: string[];

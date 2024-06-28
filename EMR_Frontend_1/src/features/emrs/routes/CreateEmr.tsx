@@ -175,13 +175,14 @@ const CreateEmr: React.FC = () => {
               render={({ field }) => (
                 <div className="flex flex-row items-center">
                   <Button
+                  
                     leftIcon={<FaPlus />}
                     onClick={() => setModalOpen(true)}
                   >
                     Add Item
                   </Button>
-
-                  <div className="mt-2 flex flex-row items-center">
+                  
+                  <div className="mt-2 flex flex-row items-center  w-30 h-30 rounded-full">
                     {uploadedImages.map((image, index) => (
                       <div key={index}>
                         <img
@@ -275,7 +276,7 @@ const CreateEmr: React.FC = () => {
       <Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
-        title="Upload Image and Add Tags"
+        title="Upload Image and  Tags"
       >
         <Stack>
           <Button onClick={() => fileInputRef.current?.click()}>
@@ -286,8 +287,9 @@ const CreateEmr: React.FC = () => {
             multiple
             ref={fileInputRef}
             style={{ display: "none" }}
-            onChange={(e) => handleImageUpload(e.target.files)}
+            // onChange={(e) => handleImageUpload(e.target.files)}
           />
+
           <MultiSelect
             data={tagsOptions} // Use diseaseOptions as tag options or create a new options array
             label="Tags"

@@ -42,11 +42,6 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
         </Routes>
       </div>
       <Footer />
-
-      <div className="w-full flex-grow flex flex-col justify-start items-start gap-2 p-4">
-        
-        
-      </div>
     </section>
   );
 };

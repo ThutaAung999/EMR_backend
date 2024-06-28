@@ -9,15 +9,16 @@ import {
   mapIdsToPatients,
   mapIdsToMedicines,
 } from "../../patients/components/util";
-import { IEmr } from "../model/emr.model";
+import { IEmr, IEmrDTO } from "../model/emr.model"; // Import IEmrDTO
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
-import UpdatePatient from "../routes/UpdateEmr";
+//import {UpdateEmr} from "../routes/UpdateEmr";
 import Pagination from "../../../reusable-components/Pagination";
 
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import useGetEmrs from "../api/get-all-emrs";
 import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
+import UpdateEmr from "../routes/UpdateEmr";
 
 export const EmrList: React.FC = () => {
   const { data, error, isLoading } = useGetEmrs();
@@ -119,6 +120,16 @@ export const EmrList: React.FC = () => {
     setUpdateModalOpen(true);
   };
 
+  // Helper function to transform IEmr to IEmrDTO
+  const transformToDTO = (emr: IEmr): IEmrDTO => {
+    return {
+      ...emr,
+      patients: emr.patients.map((patient) => patient._id),
+      diseases: emr.diseases.map((disease) => disease._id),
+      medicines: emr.medicines.map((medicine) => medicine._id),
+    };
+  };
+
   const rows =
     currentData?.map((emr) => {
       const emrDiseases = mapIdsToDiseases(
@@ -203,8 +214,8 @@ export const EmrList: React.FC = () => {
           onConfirm={handleConfirmDelete}
         />
         {updateModalOpen && selectedEmr && (
-          <UpdatePatient
-            patient={selectedEmr}
+          <UpdateEmr
+            emr={transformToDTO(selectedEmr)} // Transform to IEmrDTO
             closeModal={() => setUpdateModalOpen(false)}
           />
         )}
