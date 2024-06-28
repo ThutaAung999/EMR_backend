@@ -37,6 +37,7 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
           <Route path="/medicines" element={<MedicineList />} />
           <Route path="/diseases" element={<DiseaseList />} />
           <Route path="/emrs" element={<EmrList />} />
+          <Route path="/emrs/create" element={<CreateEmr />} />
           <Route path="/tags" element={<TagList />} />
         </Routes>
       </div>
@@ -44,7 +45,7 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
 
       <div className="w-full flex-grow flex flex-col justify-start items-start gap-2 p-4">
         
-        <CreateEmr/>
+        
       </div>
     </section>
   );

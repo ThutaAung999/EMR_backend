@@ -1,24 +1,9 @@
-/* 
-import React from 'react'
-
-const EmrList = () => {
-  return (
-    <div>
-      EMRList
-    </div>
-  )
-}
-
-export default EmrList
-
- */
 import React, { useState } from "react";
-
 import { Button, Table, TextInput } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useDeleteEmr } from "../api/delete-emr";
 import { ConfirmDialog } from "../../../reusable-components/ConfirmDialog";
-import CreateEmr from "../routes/CreateEmr";
+import { NavLink } from "react-router-dom";
 import {
   mapIdsToDiseases,
   mapIdsToPatients,
@@ -33,7 +18,6 @@ import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import useGetEmrs from "../api/get-all-emrs";
 import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
-import ImageUpload from "../routes/ImageUpload";
 
 export const EmrList: React.FC = () => {
   const { data, error, isLoading } = useGetEmrs();
@@ -178,10 +162,10 @@ export const EmrList: React.FC = () => {
 
   return (
     <section className="h-full w-full">
-      
       <div className="flex flex-row justify-between items-start min-w-full">
-      <Button>Add Emr</Button>  
-        
+        <NavLink to="/emrs/create">
+          <Button>Add Emr</Button>
+        </NavLink>
         <TextInput
           className="w-80"
           placeholder="Search"
