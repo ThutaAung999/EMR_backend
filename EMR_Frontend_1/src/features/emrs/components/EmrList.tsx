@@ -11,7 +11,6 @@ import {
 } from "../../patients/components/util";
 import { IEmr, IEmrDTO } from "../model/emr.model"; // Import IEmrDTO
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
-//import {UpdateEmr} from "../routes/UpdateEmr";
 import Pagination from "../../../reusable-components/Pagination";
 
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
@@ -171,6 +170,15 @@ export const EmrList: React.FC = () => {
       );
     }) || [];
 
+  if (updateModalOpen && selectedEmr) {
+    return (
+      <UpdateEmr
+        emr={transformToDTO(selectedEmr)} // Transform to IEmrDTO
+        closeModal={() => setUpdateModalOpen(false)}
+      />
+    );
+  }
+
   return (
     <section className="h-full w-full">
       <div className="flex flex-row justify-between items-start min-w-full">
@@ -213,12 +221,6 @@ export const EmrList: React.FC = () => {
           onClose={() => setConfirmOpen(false)}
           onConfirm={handleConfirmDelete}
         />
-        {updateModalOpen && selectedEmr && (
-          <UpdateEmr
-            emr={transformToDTO(selectedEmr)} // Transform to IEmrDTO
-            closeModal={() => setUpdateModalOpen(false)}
-          />
-        )}
       </div>
     </section>
   );

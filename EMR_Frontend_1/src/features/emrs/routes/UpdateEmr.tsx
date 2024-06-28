@@ -8,7 +8,7 @@ import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import { useGetTags } from "../../tags/api/get-all-tags";
 import axios from "axios";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTimes } from "react-icons/fa";
 
 export interface UpdateEmrProps {
   emr: IEmrDTO;
@@ -75,6 +75,12 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
     }
   };
 
+  const handleRemoveImage = (index: number) => {
+    // Create a new array without the image at the specified index
+    const updatedImages = uploadedImages.filter((_, i) => i !== index);
+    setUploadedImages(updatedImages);
+  };
+
   const onSubmit = (data: IEmrDTO) => {
     data.emrImages = uploadedImages;
     mutation.mutate(data);
@@ -98,7 +104,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
     tags?.map((tag) => ({ value: tag._id, label: tag.name })) || [];
 
   return (
-    <div className="update-emr-page">
+    <div className="h-screen w-full">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full" encType="multipart/form-data">
         <Stack>
           <Controller
@@ -118,6 +124,12 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                         alt="Uploaded"
                         className="object-cover w-32 h-32 rounded-lg shadow-md" // Tailwind CSS classes for sizing and styling
                       />
+                      <button
+                        className="absolute top-0 right-0"
+                        onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
+                      >
+                        <FaTimes />
+                      </button>
                     </div>
                   ))}
                 </div>
