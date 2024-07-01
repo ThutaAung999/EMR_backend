@@ -106,7 +106,7 @@ export const EmrList: React.FC = () => {
     setConfirmOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = () => { 
     if (selectedEmrId) {
       mutationDelete.mutate(selectedEmrId);
     }

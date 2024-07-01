@@ -7,11 +7,12 @@
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
+        
         "paths": {
             "@/*": ["./src/*"]
         }
 },
 
     "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules","**/*.spec.ts"]
 }

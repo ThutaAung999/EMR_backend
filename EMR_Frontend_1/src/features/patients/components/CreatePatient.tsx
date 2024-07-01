@@ -17,7 +17,6 @@ import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetDoctors } from "../../doctors/api/get-all-doctors";
 
 const CreatePatient: React.FC = () => {
-
   const {
     control,
     handleSubmit,
@@ -153,7 +152,7 @@ const CreatePatient: React.FC = () => {
               <Button type="submit">Save</Button>
             </div>
           </Stack>
-        </form> 
+        </form>
       </Modal>
 
       <Stack align="center">

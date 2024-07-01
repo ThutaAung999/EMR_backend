@@ -36,21 +36,6 @@ export const newPatient = async (patient: IPatient): Promise<IPatient> => {
 
     console.log("new patient in PatientService : ", patient);
 
-    /* don't delete for studying
-        try {
-            zodPatientSchema.parse(patient);
-            const newPatient = new Patient(patient);
-            return await newPatient.save();
-        } catch (error) {
-            if (error instanceof ZodError) {
-
-                console.log("zod  error :",error.message)
-                throw new Error(JSON.stringify(error.errors));
-            }
-            throw error;
-        }
-    */
-
     try {
         const newPatient = new Patient(patient);
         return await newPatient.save();
@@ -68,9 +53,32 @@ export const newPatient = async (patient: IPatient): Promise<IPatient> => {
 export const updatePatient = async (patientId: string, patient: IPatient): Promise<IPatient> => {
 
     zodPatientUpdateSchema.parse(patient);
-    const newPatient = <IPatient>await Patient.findByIdAndUpdate(patientId, patient, {new: true});
-    //return newPatient as IPatient;   //   This way  works  also.
-    return newPatient;
+    
+    try{
+
+    const newPatient = <IPatient>await Patient.findByIdAndUpdate(patientId, {
+        ...patient,
+        updatedAt: new Date(), // Ensure updatedAt is updated
+      
+    },
+        {new: true});
+
+   /*
+   //this is oririnal code
+   const newPatient = <IPatient>await Patient.findByIdAndUpdate(patientId, patient,
+         {new: true});
+    */
+         
+         return newPatient as IPatient;   //   This way  works  also.
+    
+ //   return newPatient;
+    }catch (error) {
+        // Handle error appropriately
+        console.error('Error updating patient:', error);
+        throw error;
+      }
+
+
 }
 export const deletePatient = async (patientId: String): Promise<IPatient> => {
     const deletedPatient = await Patient.findByIdAndDelete(patientId);
