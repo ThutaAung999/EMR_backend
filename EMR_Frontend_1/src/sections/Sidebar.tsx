@@ -61,98 +61,95 @@ const Sidebar: React.FC<{
   useEffect(() => {
     const currentPath = location.pathname;
     const activeIndex = navItems.findIndex(
-        (item) => routes[item] === currentPath
+      (item) => routes[item] === currentPath
     );
     setActiveNavIndex(activeIndex !== -1 ? activeIndex : 0);
   }, [location, navItems, setActiveNavIndex]);
 
   return (
-      <motion.section
-          animate={isExpanded ? "expanded" : "nonExpanded"}
-          variants={variants}
-          className={
-            "w-1/5 bg-green-300 h-screen flex flex-col justify-between items-center gap-10 relative " +
-            (isExpanded ? "py-8 px-6" : "px-8 py-6")
-          }
+    <motion.section
+      animate={isExpanded ? "expanded" : "nonExpanded"}
+      variants={variants}
+      className={`flex flex-col justify-between items-center gap-10 bg-green-300 ${
+        isExpanded ? "py-8 px-6" : "px-8 py-6"
+      } h-screen relative`} // Added relative positioning
+    >
+      <div 
+        id="expanded-icon"
+        className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute top-4 right-4" // Position it at the top right
+        onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex flex-col justify-center items-center gap-8">
-          {isExpanded ? (
-              <div id="logo-box">
-                <h1 className="text-green-800 font-bold text-4xl">
-                  E-M-R <span className="italic text-green-600">App</span>
-                </h1>
-              </div>
-          ) : (
-              <div className="flex justify-center items-center">
-                <h1 className="text-green-800 font-bold text-3xl">E</h1>
-                <span className="italic text-green-600 text-3xl">A</span>
-              </div>
-          )}
+        <FaArrowRight />
+      </div>
 
-          <div
-              id="navlinks-box"
-              className="flex flex-col justify-center items-start gap-5 w-full mt-5"
-          >
-            {navItems.map((item, index) => (
-                <NavLink
-                    key={item}
-                    to={routes[item]}
-                    id="link-box"
-                    className={
-                      "flex justify-start items-center gap-4 w-full cursor-pointer rounded-xl " +
-                      (activeNavIndex === index
-                          ? "bg-green-500 text-white"
-                          : "text-green-900 hover:bg-green-400 hover:text-white") +
-                      (isExpanded ? " px-6 py-2" : " p-2")
-                    }
-                >
-                  <motion.div
-                      variants={hoverVariants}
-                      whileHover="hover"
-                      className="flex items-center gap-4 w-full"
+      <div className="flex flex-col justify-center items-center ">
+        {isExpanded ? (
+          <div id="logo-box">
+            <h1 className="text-green-800 font-bold text-4xl mt-5">
+              E-M-R <span className="italic text-green-600">App</span>
+            </h1>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center mt-10">
+            <h1 className="text-green-800 font-bold text-3xl">E</h1>
+            <span className="italic text-green-600 text-3xl">A</span>
+          </div>
+        )}
+
+        <div
+          id="navlinks-box"
+          className="flex flex-col justify-center items-start gap-5 w-full mt-5"
+        >
+          {navItems.map((item, index) => (
+            <NavLink
+              key={item}
+              to={routes[item]}
+              id="link-box"
+              className={`flex justify-start items-center gap-4 w-full cursor-pointer rounded-xl ${
+                activeNavIndex === index
+                  ? "bg-green-500 text-white"
+                  : "text-green-900 hover:bg-green-400 hover:text-white"
+              } ${isExpanded ? "px-6 py-2" : "p-2"}`}
+            >
+              <motion.div
+                variants={hoverVariants}
+                whileHover="hover"
+                className="flex items-center gap-4 w-full"
+              >
+                <div className="bg-green-400 text-white p-2 rounded-full">
+                  {React.createElement(icons[item], {
+                    className: "md:w-6 w-4 h-4 md:h-6",
+                  })}
+                </div>
+
+                {isExpanded && (
+                  <span
+                    className={`text-lg ${isExpanded ? "flex" : "hidden"}`}
                   >
-                    <div className="bg-green-400 text-white p-2 rounded-full">
-                      {React.createElement(icons[item], {
-                        className: "md:w-6 w-4 h-4 md:h-6",
-                      })}
-                    </div>
-
-                    {isExpanded && (
-                        <span className={"text-lg" + (isExpanded ? " flex" : " hidden")}>
                     {item}
                   </span>
-                    )}
-                  </motion.div>
-                </NavLink>
-            ))}
-          </div>
+                )}
+              </motion.div>
+            </NavLink>
+          ))}
         </div>
+      </div>
 
-        <div
-            id="expanded-icon"
-            className="bg-green-500 text-white p-2 rounded-full cursor-pointer absolute -right-4 bottom-20 md:bottom-40 md:flex hidden"
-            onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <FaArrowRight />
-        </div>
-
-        <div
-            id="logout-box"
-            className="w-full flex flex-col justify-start items-center gap-4 cursor-pointer"
-        >
-          <div className="bg-green-700 w-full h-[0.5px]"></div>
-          <div className="flex justify-center items-center gap-2">
-            <MdLogout className="text-green-900 h-6 w-6" />
-            <span
-                className={
-                  "text-green-900 text-lg " + (isExpanded ? "flex" : "hidden")
-                }
-            >
+      <div
+        id="logout-box"
+        className="w-full flex flex-col justify-start items-center gap-4 cursor-pointer"
+      >
+        <div className="bg-green-700 w-full h-[0.5px]"></div>
+        <div className="flex justify-center items-center gap-2">
+          <MdLogout className="text-green-900 h-6 w-6" />
+          <span
+            className={`text-green-900 text-lg ${isExpanded ? "flex" : "hidden"}`}
+          >
             Logout
           </span>
-          </div>
         </div>
-      </motion.section>
+      </div>
+    </motion.section>
   );
 };
 

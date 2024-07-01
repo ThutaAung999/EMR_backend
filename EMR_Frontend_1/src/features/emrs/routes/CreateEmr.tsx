@@ -8,7 +8,7 @@ import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import axios from "axios";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTimes } from "react-icons/fa";
 import { useGetTags } from "../../tags/api/get-all-tags";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
@@ -52,7 +52,6 @@ const CreateEmr: React.FC = () => {
   const { data: tags, error: tagError, isLoading: tagIsLoading } = useGetTags();
 
   const mutation = useCreateEmr(() => {
-    close();
     reset();
     setUploadedImages([]); // Clear uploaded images
     if (fileInputRef.current) {
@@ -105,6 +104,13 @@ const CreateEmr: React.FC = () => {
     }
   };
 
+  const handleRemoveImage = (index: number) => {
+    // Remove the image from selected files if not uploaded yet
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    // Remove the image from uploaded images if already uploaded
+    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
   const onSubmit = (data: IEmrDTO) => {
     data.emrImages = uploadedImages;
     mutation.mutate(data);
@@ -155,9 +161,7 @@ const CreateEmr: React.FC = () => {
     tags
       ?.filter(
         (tag, index, self) =>
-          tag &&
-          tag._id &&
-          self.findIndex((t) => t?._id === tag._id) === index
+          tag && tag._id && self.findIndex((t) => t?._id === tag._id) === index
       )
       .map((tag) => ({ value: tag._id, label: tag.name })) || [];
 
@@ -190,15 +194,21 @@ const CreateEmr: React.FC = () => {
                     Add Item
                   </Button>
 
-                  <div className="mt-2 flex flex-row items-center w-30 h-30 rounded-full">
+                  <div className="mt-2 flex flex-row items-center w-30 h-30 rounded-full ms-4">
                     {uploadedImages.map((image, index) => (
-                      <div key={index}>
+                      <div key={index} className="relative">
                         <img
                           src={`http://localhost:9999/${image.image}`} // Correct image path
                           alt="Uploaded"
                           className="w-24 h-24 rounded-full"
                           style={{ margin: "10px" }}
                         />
+                        <button
+                          className="absolute top-0 right-0"
+                          onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
+                        >
+                          <FaTimes />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -260,7 +270,6 @@ const CreateEmr: React.FC = () => {
             <Controller
               name="notes"
               control={control}
-              rules={{ required: "NOTES is required" }}
               render={({ field }) => (
                 <Textarea
                   label="Note :"

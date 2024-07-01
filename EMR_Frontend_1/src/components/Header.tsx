@@ -5,7 +5,7 @@ import client from "../assets/images/client.jpg";
 
 const Header: React.FC = () => {
     return (
-        <section className="w-full bg-green-500 lg:h-20 h-fit flex lg:flex-row flex-col justify-between items-center p-4  lg:gap-2 gap-4">
+        <section className="  w-full bg-green-500 lg:h-20 h-fit flex lg:flex-row flex-col justify-between items-center p-4  lg:gap-2 gap-4">
           <div>
             <h1 className="text-2xl font-semibold">Overview</h1>
           </div>

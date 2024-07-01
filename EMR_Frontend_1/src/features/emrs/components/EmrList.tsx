@@ -47,7 +47,7 @@ export const EmrList: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
   const totalItems = data?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const { active, setPage, next, previous } = usePagination({

@@ -116,16 +116,17 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                   Add Item
                 </Button>
 
-                <div className="mt-2 flex flex-row items-center space-x-4">
+                
+                <div className="mt-2 flex flex-row items-center space-x-4 ">
                   {uploadedImages.map((image, index) => (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative ">
                       <img
                         src={`http://localhost:9999/${image.image}`} // Correct image path
                         alt="Uploaded"
-                        className="object-cover w-32 h-32 rounded-lg shadow-md" // Tailwind CSS classes for sizing and styling
+                        className="object-cover w-32 h-32 rounded-full shadow-md  mx-3 " 
                       />
                       <button
-                        className="absolute top-0 right-0"
+                        className="absolute top-0 right-0 "
                         onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
                       >
                         <FaTimes />

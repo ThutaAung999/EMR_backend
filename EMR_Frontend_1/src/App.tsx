@@ -8,7 +8,7 @@ const App: React.FC = () => {
   const [activeNavIndex, setActiveNavIndex] = useState(0);
 
   return (
-    <main className="w-full  bg-slate-200 h-screen flex ">
+    <div className="flex h-screen">
       <Sidebar
         activeNavIndex={activeNavIndex}
         setActiveNavIndex={setActiveNavIndex}
@@ -16,7 +16,7 @@ const App: React.FC = () => {
       />
 
       <Main activeNavIndex={activeNavIndex} navItems={NAV_ITEMS} />
-    </main>
+    </div>
   );
 };
 
