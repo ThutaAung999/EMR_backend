@@ -8,6 +8,9 @@ import { useGetMedicines } from "../api/get-all-medicines";
 import { IconUserPlus } from "@tabler/icons-react";
 import { useGetDiseases } from "../../diseases/api/get-all-diseases";
 
+
+import { GiPillDrop } from "react-icons/gi";
+
 const CreateMedicine: React.FC = () => {
   const {
     control,
@@ -110,7 +113,7 @@ const CreateMedicine: React.FC = () => {
       </Modal>
 
       <Stack align="center">
-        <Button onClick={open} leftIcon={<IconUserPlus size={18} />}>
+        <Button onClick={open} leftIcon={<GiPillDrop size={18} />}>
           New Medicine
         </Button>
       </Stack>

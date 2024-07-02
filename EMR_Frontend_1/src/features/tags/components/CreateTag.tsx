@@ -4,6 +4,7 @@ import { Button, TextInput, Stack, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateTag } from "../api/create-tag";
 import { ITagDTO } from "../model/ITag";
+import { AiOutlineTag } from "react-icons/ai";
 
 import { IconUserPlus } from "@tabler/icons-react";
 
@@ -56,8 +57,9 @@ export const CreateTag: React.FC = () => {
         </form>
       </Modal>
 
+
       <Stack align="center">
-        <Button onClick={open} leftIcon={<IconUserPlus size={18} />}>
+        <Button onClick={open} leftIcon={< AiOutlineTag size={18} />}>
           New Tag
         </Button>
       </Stack>

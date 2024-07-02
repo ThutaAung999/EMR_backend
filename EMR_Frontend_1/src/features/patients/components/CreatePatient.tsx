@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
+import {  FaUserFriends } from "react-icons/fa";
 import {
   Button,
   TextInput,
@@ -156,7 +157,7 @@ const CreatePatient: React.FC = () => {
       </Modal>
 
       <Stack align="center">
-        <Button onClick={open} leftIcon={<IconUserPlus size={18} />}>
+        <Button onClick={open} leftIcon={< FaUserFriends size={18} />}>
           New Patient
         </Button>
       </Stack>

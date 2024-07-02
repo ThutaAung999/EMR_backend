@@ -11,6 +11,7 @@ import { Route, Routes } from "react-router-dom";
 import TagList from "../features/tags/components/TagList";
 import CreatePatient from "../features/patients/components/CreatePatient";
 import CreateEmr from "../features/emrs/routes/CreateEmr";
+import CreateEmrForm from "../features/emrs/routes/CreateEmr/CreateEmrForm";
 
 const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
   activeNavIndex,
@@ -29,7 +30,10 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
           <Route path="/medicines" element={<MedicineList />} />
           <Route path="/diseases" element={<DiseaseList />} />
           <Route path="/emrs" element={<EmrList />} />
-          <Route path="/emrs/create" element={<CreateEmr />} />
+            
+
+           {/* <Route path="/emrs/create" element={<CreateEmrForm />} /> */}
+
           <Route path="/tags" element={<TagList />} />
         </Routes>
       </div>

@@ -317,6 +317,7 @@ const CreateEmr: React.FC = () => {
               />
             ))}
           </div>
+
           <MultiSelect
             data={tagsOptions}
             label="Tags"

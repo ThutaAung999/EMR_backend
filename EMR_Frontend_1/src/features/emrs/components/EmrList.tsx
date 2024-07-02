@@ -19,6 +19,9 @@ import { useGetMedicines } from "../../medicine/api/get-all-medicines";
 import useGetPatients from "../../patients/api/get-all-patients";
 import UpdateEmr from "../routes/UpdateEmr";
 
+
+import { GiMedicalPack } from "react-icons/gi";
+
 export const EmrList: React.FC = () => {
   const { data, error, isLoading } = useGetEmrs();
   const {
@@ -183,7 +186,9 @@ export const EmrList: React.FC = () => {
     <section className="h-full w-full">
       <div className="flex flex-row justify-between items-start min-w-full">
         <NavLink to="/emrs/create">
-          <Button>Add Emr</Button>
+        <Button  leftIcon={<GiMedicalPack size={18} />}>
+          Add EMR
+          </Button>
         </NavLink>
         <TextInput
           className="w-80"

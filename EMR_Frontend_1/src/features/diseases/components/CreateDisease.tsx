@@ -7,6 +7,7 @@ import { IDiseaseDTO } from "../model/IDisease";
 
 import { IconUserPlus } from "@tabler/icons-react";
 
+import { GiVirus } from "react-icons/gi";
 
 export const CreateDisease: React.FC = () => {
   const {
@@ -76,7 +77,7 @@ export const CreateDisease: React.FC = () => {
       </Modal>
 
       <Stack align="center">
-        <Button onClick={open} leftIcon={<IconUserPlus size={18} />}>
+        <Button onClick={open} leftIcon={<GiVirus size={18} />}>
           New Disease
         </Button>
       </Stack>
