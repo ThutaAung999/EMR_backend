@@ -14,6 +14,7 @@ import CreateEmr from "../features/emrs/routes/CreateEmr";
 import CreateEmrForm from "../features/emrs/routes/CreateEmr/CreateEmrForm";
 import Signup from "../features/auth/routes/Signup";
 import Login from "../features/auth/routes/Login";
+import ProtectedRoute from "../features/auth/providers/ProtectRoute";
 
 const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
   activeNavIndex,
@@ -25,7 +26,19 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
 
       <div className="w-full flex-grow flex flex-col justify-start items-center gap-2 p-4">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/signup"  element={<Signup/>}/>
+          <Route path="/login"  element={<Login/>}/>
+          {/* 
+          <Route path="/" element={<Dashboard />} /> */}
+          
+          <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
           <Route path="/patients" element={<PatientList />} />
           <Route path="/patients/create" element={<CreatePatient />} />
           <Route path="/medicines" element={<MedicineList />} />
@@ -36,17 +49,11 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
           {/* <Route path="/emrs/create" element={<CreateEmrForm />} /> */}
 
           <Route path="/tags" element={<TagList />} />
+
         </Routes>
       </div>
       <Footer />
 
-      <div className="w-full flex-grow m-10 p-10 ">
-        <Signup />
-      </div>
-
-      <div>
-        <Login />
-      </div>
 
     </section>
   );

@@ -1,9 +1,9 @@
 import React from 'react';
-import axios from 'axios';
+import instance from '../../../utils/axios'; // Import the custom Axios instance
 import { useForm } from '@mantine/form';
 import { TextInput, PasswordInput, Button, Paper, Title, Container } from '@mantine/core';
 
-const Signup = () => {
+const Signup: React.FC = () => {
   const form = useForm({
     initialValues: {
       name: '',
@@ -22,19 +22,29 @@ const Signup = () => {
 
   const handleSignup = async (values: typeof form.values) => {
     try {
-      const response = await axios.post('/api/register', values);
+      // Send a POST request to the signup endpoint with form values
+      const response = await instance.post('/api/users/signup', values);
+
+      // Log the success message and response data
       console.log('Registration successful:', response.data);
-      // Handle successful registration (e.g., redirect or show success message)
+
+      // Optionally, handle successful registration (e.g., redirect or show success message)
+      // Example: Redirect to login page after successful registration
+      // history.push('/login');
     } catch (error) {
+      // Log the error message
       console.error('Registration error:', error);
-      // Handle error (e.g., show error message)
+
+      // Handle error (e.g., show error message to the user)
+      // Example: Show an error message using a toast notification library
+      // showToast('error', 'Registration failed. Please try again.');
     }
   };
 
   return (
-    <Container size={420} my={40}>
+    <Container size={420} my={40} className="w-full flex flex-grow flex-col">
       <Title align="center">Sign Up</Title>
-      <Paper withBorder shadow="md" padding="lg" mt="lg" radius="md">
+      <Paper withBorder shadow="md" padding="lg" mt="lg" radius="md" className="p-3">
         <form onSubmit={form.onSubmit(handleSignup)}>
           <TextInput
             label="Name"

@@ -36,7 +36,6 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
   const [uploadedImages, setUploadedImages] = useState<EmrImage[]>(emr.emrImages);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const { data: diseases } = useGetDiseases();
   const { data: medicines } = useGetMedicines();
@@ -45,18 +44,11 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
 
   const mutation = useUpdateEmr();
 
-  const handleImageSelect = (files: FileList | null) => {
+  const handleImageUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
-    const fileArray = Array.from(files);
-    setSelectedFiles(fileArray);
-  };
-
-  const handleImageUpload = async () => {
-    if (selectedFiles.length === 0) return;
-
     const formData = new FormData();
-    selectedFiles.forEach((file) => {
+    Array.from(files).forEach((file) => {
       formData.append("image", file);
     });
 
@@ -78,7 +70,6 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
       setUploadedImages((prev) => [...prev, ...newImages]);
       setSelectedTags([]); // Reset tags after saving
       setModalOpen(false); // Close modal after saving
-      setSelectedFiles([]); // Clear selected files
     } catch (err) {
       console.error(err);
     }
@@ -125,17 +116,17 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                   Add Item
                 </Button>
 
-                <div className="mt-2 flex flex-row items-center space-x-4">
+                
+                <div className="mt-2 flex flex-row items-center space-x-4 ">
                   {uploadedImages.map((image, index) => (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative ">
                       <img
                         src={`http://localhost:9999/${image.image}`} // Correct image path
                         alt="Uploaded"
-                        className="object-cover w-32 h-32 rounded-full shadow-md mx-3"
+                        className="object-cover w-32 h-32 rounded-lg shadow-md  mx-3 " 
                       />
-                      <button
-                        type="button"
-                        className="absolute top-0 right-0"
+                      <button type='button'
+                        className="absolute top-0 right-0 "
                         onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
                       >
                         <FaTimes />
@@ -228,18 +219,8 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
             multiple
             ref={fileInputRef}
             style={{ display: "none" }}
-            onChange={(e) => handleImageSelect(e.target.files)}
+            onChange={(e) => handleImageUpload(e.target.files)}
           />
-          <div className="mt-4 flex flex-row flex-wrap gap-4">
-            {selectedFiles.map((file, index) => (
-              <img
-                key={index}
-                src={URL.createObjectURL(file)}
-                alt="Selected"
-                className="w-48 h-48"
-              />
-            ))}
-          </div>
           <MultiSelect
             data={tagsOptions}
             label="Tags"
@@ -249,7 +230,15 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
           />
           <div className="flex flex-row gap-6 justify-end mt-4">
             <Button onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleImageUpload}>Save</Button>
+            <Button
+              onClick={() => {
+                if (fileInputRef.current?.files) {
+                  handleImageUpload(fileInputRef.current.files);
+                }
+              }}
+            >
+              Save
+            </Button>
           </div>
         </Stack>
       </Modal>

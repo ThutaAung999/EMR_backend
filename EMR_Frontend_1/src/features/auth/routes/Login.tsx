@@ -1,13 +1,15 @@
 import React, { useContext } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import instance from '../../../utils/axios'; // Import the custom Axios instance
 import { useForm } from '@mantine/form';
 import { TextInput, PasswordInput, Button, Paper, Title, Container, Notification } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { AuthContext } from '../providers/AuthContext';
 
-const Login = () => {
+const Login: React.FC = () => {
   const { setAuth } = useContext(AuthContext)!;
   const [notification, setNotification] = React.useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const navigate = useNavigate(); // React Router's hook for navigation
 
   const form = useForm({
     initialValues: {
@@ -23,22 +25,23 @@ const Login = () => {
 
   const handleLogin = async (values: typeof form.values) => {
     try {
-      const response = await axios.post('/api/login', values);
+      const response = await instance.post('/api/users/login', values);
       console.log('Login successful:', response.data);
       setAuth({
         token: response.data.token,
         isAuthenticated: true,
       });
       setNotification({ message: 'Login successful!', type: 'success' });
-      // Handle successful login (e.g., redirect or store token)
+      navigate('/'); // Redirect to the home page upon successful login
     } catch (error) {
       console.error('Login error:', error);
       setNotification({ message: 'Login failed. Please check your credentials and try again.', type: 'error' });
+      form.reset(); // Clear form fields on login failure
     }
   };
 
   return (
-    <Container size={420} className="min-h-screen flex items-center justify-center">
+    <Container size={420} className="min-h-screen flex flex-grow w-full items-center justify-center">
       {notification && (
         <Notification
           icon={notification.type === 'success' ? <IconCheck size={18} /> : <IconX size={18} />}

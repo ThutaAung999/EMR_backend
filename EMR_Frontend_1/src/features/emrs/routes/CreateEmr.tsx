@@ -203,7 +203,7 @@ const CreateEmr: React.FC = () => {
                           className="w-24 h-24 rounded-full"
                           style={{ margin: "10px" }}
                         />
-                        <button
+                        <button type='button'
                           className="absolute top-0 right-0"
                           onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
                         >
