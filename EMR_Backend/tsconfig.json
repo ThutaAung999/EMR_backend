@@ -10,10 +10,18 @@
         
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "typeRoots": ["./src/types", "./node_modules/@types"]
 },
 
-    "include": ["src/**/*.ts"],
+    "include": [
+        "src/**/*.ts",
+        "custom.d.ts"
+],
     "exclude": ["node_modules","**/*.spec.ts"],
-    "files":["types.d.ts"]
+    "files":[
+        "./src/types/types.d.ts",
+        "custom.d.ts"
+
+    ]
 }

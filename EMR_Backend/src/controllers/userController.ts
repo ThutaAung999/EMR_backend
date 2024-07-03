@@ -9,18 +9,19 @@ import * as factory from './handlerFactory';
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
-  user?: IUser;
+  user: IUser;
 }
 
-const multerStorage: StorageEngine = multer.memoryStorage();
-
-const multerFilter: FileFilterCallback = (req, file, cb) => {
+const multerFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb(new AppError('Not an image! Please upload only images.', 400), false);
+    cb(new AppError('Not an image! Please upload only images.', 400) as unknown as null, false);
   }
 };
+
+// Setup multer storage and upload middleware
+const multerStorage: StorageEngine = multer.memoryStorage();
 
 const upload = multer({
   storage: multerStorage,
@@ -29,16 +30,17 @@ const upload = multer({
 
 export const uploadUserPhoto = upload.single('photo');
 
-export const resizeUserPhoto = catchAsync(async (req: MulterRequest, res: Response, next: NextFunction) => {
-  if (!req.file || !req.user) return next();
+export const resizeUserPhoto = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const reqMulter = req as MulterRequest;
+  if (!reqMulter.file || !reqMulter.user) return next();
 
-  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+  reqMulter.file.filename = `user-${reqMulter.user.id}-${Date.now()}.jpeg`;
 
-  await sharp(req.file.buffer)
+  await sharp(reqMulter.file.buffer)
     .resize(500, 500)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
-    .toFile(`public/img/users/${req.file.filename}`);
+    .toFile(`public/img/users/${reqMulter.file.filename}`);
 
   next();
 });
@@ -51,22 +53,24 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
   return newObj;
 };
 
-export const getMe = (req: MulterRequest, res: Response, next: NextFunction) => {
-  if (req.user) {
-    req.params.id = req.user.id;
+export const getMe = (req: Request, res: Response, next: NextFunction) => {
+  const reqMulter = req as MulterRequest;
+  if (reqMulter.user) {
+    req.params.id = reqMulter.user.id;
   }
   next();
 };
 
-export const updateMe = catchAsync(async (req: MulterRequest, res: Response, next: NextFunction) => {
-  if (req.body.password || req.body.passwordConfirm) {
+export const updateMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const reqMulter = req as MulterRequest;
+  if (reqMulter.body.password || reqMulter.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Please use /updateMyPassword.', 400));
   }
 
-  const filteredBody = filterObj(req.body, 'name', 'email');
-  if (req.file) filteredBody.photo = req.file.filename;
+  const filteredBody = filterObj(reqMulter.body, 'name', 'email');
+  if (reqMulter.file) filteredBody.photo = reqMulter.file.filename;
 
-  const updatedUser = await User.findByIdAndUpdate(req.user!.id, filteredBody, {
+  const updatedUser = await User.findByIdAndUpdate(reqMulter.user.id, filteredBody, {
     new: true,
     runValidators: true,
   });
@@ -79,8 +83,9 @@ export const updateMe = catchAsync(async (req: MulterRequest, res: Response, nex
   });
 });
 
-export const deleteMe = catchAsync(async (req: MulterRequest, res: Response, next: NextFunction) => {
-  await User.findByIdAndUpdate(req.user!.id, { active: false });
+export const deleteMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const reqMulter = req as MulterRequest;
+  await User.findByIdAndUpdate(reqMulter.user.id, { active: false });
 
   res.status(204).json({
     status: 'success',

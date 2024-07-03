@@ -8,7 +8,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { NavItem } from "../App";
 
 const variants = {
-  expanded: { width: "20%" },
+  expanded: { width: "15%" },
   nonExpanded: { width: "5%" },
 };
 
@@ -85,7 +85,7 @@ const Sidebar: React.FC<{
       <div className="flex flex-col justify-center items-center ">
         {isExpanded ? (
           <div id="logo-box">
-            <h1 className="text-green-800 font-bold text-4xl mt-5">
+            <h1 className="text-green-800 font-bold  text-4xl mt-5">
               E-M-R <span className="italic text-green-600">App</span>
             </h1>
           </div>

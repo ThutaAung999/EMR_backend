@@ -1,3 +1,5 @@
+import * as factory from '../controllers/handlerFactory';
+
 import crypto from "crypto";
 import mongoose, { Document, Model, Query } from "mongoose";
 import validator from "validator";
@@ -85,6 +87,7 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
+
 userSchema.pre<IUser>("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
@@ -133,6 +136,10 @@ userSchema.methods.createPasswordResetToken = function (): string {
   return resetToken;
 };
 
-const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+const User: Model<IUser> = mongoose.model<IUser>("Users", userSchema);
+
+//export const getUser = factory.getOne(User as unknown as Model<Document>);
+
+
 
 export default User;

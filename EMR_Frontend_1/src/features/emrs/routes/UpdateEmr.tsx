@@ -134,6 +134,7 @@ const UpdateEmr: React.FC<UpdateEmrProps> = ({ emr, closeModal }) => {
                         className="object-cover w-32 h-32 rounded-full shadow-md mx-3"
                       />
                       <button
+                        type="button"
                         className="absolute top-0 right-0"
                         onClick={() => handleRemoveImage(index)} // Pass index to handleRemoveImage
                       >

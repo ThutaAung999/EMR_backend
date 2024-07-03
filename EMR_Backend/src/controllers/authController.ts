@@ -14,10 +14,13 @@ interface JwtPayload {
 }
 
 const signToken = (id: string): string => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+  return jwt.sign(
+    { id }, 
+    process.env.JWT_SECRET as string, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
 
 const createSendToken = (
   user: IUser,
@@ -26,23 +29,18 @@ const createSendToken = (
 ): void => {
   const token = signToken(user._id.toString());
 
-  const cookieOptions 
-  : {
+  const cookieOptions: {
     expires: Date;
     httpOnly: boolean;
     secure?: boolean; 
-  }
-  = {
+  } = {
     expires: new Date(
       Date.now() +
-        (process.env.JWT_COOKIE_EXPIRES_IN as unknown as number) *
-          24 *
-          60 *
-          60 *
-          1000
+      (parseInt(process.env.JWT_COOKIE_EXPIRES_IN || '0', 10) * 24 * 60 * 60 * 1000)
     ),
     httpOnly: true,
   };
+
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   res.cookie("jwt", token, cookieOptions);
@@ -61,16 +59,35 @@ const createSendToken = (
 
 export const signup = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const newUser = await User.create(req.body);
+    try {
+      console.log('Request Body:', req.body); // Log the body
 
-    
+      // Validate the request body here if needed
+      const userData = req.body;
+      if (!userData || Object.keys(userData).length === 0) {
+        return next(new AppError('Invalid request data', 400));
+      }
 
-    let host = req.get("host");
-    if (host === "127.0.0.1:3000") host = "localhost:3000";
-    const url = `${req.protocol}://${host}/me`;
-    await new Email(newUser, url).sendWelcome();
+      const newUser = await User.create(userData);
+      console.log('New User:', newUser); // Log the new user
 
-    createSendToken(newUser, 201, res);
+      if (!newUser) {
+        return next(new AppError('User creation failed', 500));
+      }
+
+      // Uncomment and configure the following lines for sending welcome email
+      // let host = req.get("host");
+      // if (host === "127.0.0.1:9999") host = "localhost:9999";
+      // const url = `${req.protocol}://${host}/me`;
+      // await new Email(newUser, url).sendWelcome();
+      // console.log('Welcome email sent');
+
+      createSendToken(newUser, 201, res);
+      console.log('Token created and sent'); // Log after creating and sending token
+    } catch (error) {
+      console.error('Error during signup:', error);
+      next(error); // Pass the error to the global error handler
+    }
   }
 );
 
@@ -107,11 +124,17 @@ export const logout = (req: Request, res: Response): void => {
 export const protect = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     let token: string | undefined;
+
+    console.log('req.headers.authorization :',req.headers.authorization)
+
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
     ) {
+      
       token = req.headers.authorization.split(" ")[1];
+
+      console.log('token :',token)
     } else if (req.cookies.jwt) {
       token = req.cookies.jwt;
     }
@@ -154,46 +177,46 @@ export const protect = catchAsync(
   }
 );
 
+//---------------------------
 
 export const isLoggedIn = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    if (req.cookies.jwt) {
-      try {
-        const token = req.cookies.jwt;
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  if (req.cookies.jwt) {
+    try {
+      const token = req.cookies.jwt;
 
-        const promisify = util.promisify;
-        const jwtVerify = promisify(jwt.verify) as (
-          token: string,
-          secretOrPublicKey: Secret
-        ) => Promise<jwt.JwtPayload>;
-        
-        const decoded = await jwtVerify(token, process.env.JWT_SECRET as Secret);
-        
-        
-        const currentUser = await User.findById(decoded.id);
-        if (!currentUser) {
-          return next();
-        }
-  
-        if (currentUser.changedPasswordAfter(decoded.iat!)) {
-          return next();
-        }
-  
-        res.locals.user = currentUser;
-        return next();
-      } catch (err) {
+      const promisify = util.promisify;
+      const jwtVerify = promisify(jwt.verify) as (
+        token: string,
+        secretOrPublicKey: Secret
+      ) => Promise<jwt.JwtPayload>;
+
+      const decoded = await jwtVerify(token, process.env.JWT_SECRET as Secret);
+
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
         return next();
       }
+
+      if (currentUser.changedPasswordAfter(decoded.iat!)) {
+        return next();
+      }
+
+      res.locals.user = currentUser;
+      return next();
+    } catch (err) {
+      return next();
     }
-    next();
-  };
+  }
+  next();
+};
 
 export const restrictTo = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user?.role!)) {
       return next(
         new AppError("You do not have permission to perform this action", 403)
       );
@@ -263,11 +286,11 @@ export const resetPassword = catchAsync(
 
     createSendToken(user, 200, res);
   }
-);43
+);
 
 export const updatePassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const user = await User.findById(req.user.id).select("+password");
+    const user = await User.findById(req.user?.id).select("+password");
 
     if (!user || !(await user.correctPassword(req.body.passwordCurrent, user.password!))) {
       return next(new AppError("Your current password is wrong.", 401));
