@@ -16,12 +16,12 @@
 
     "include": [
         "src/**/*.ts",
-        "custom.d.ts"
+
 ],
     "exclude": ["node_modules","**/*.spec.ts"],
     "files":[
         "./src/types/types.d.ts",
-        "custom.d.ts"
+
 
     ]
 }

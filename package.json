@@ -2,15 +2,13 @@
   "name": "emr-backend",
   "version": "0.0.0",
   "private": true,
-
   "scripts": {
     "start": "nodemon ./src/bin/www.ts",
     "build": "tsc",
     "dev": "ts-node-dev ./src/bin/www.ts",
     "test": "jest",
-    "prod":"node dist/bin/www.js"
+    "prod": "node dist/bin/www.js"
   },
-  
   "dependencies": {
     "@mantine/core": "^7.11.0",
     "@mantine/hooks": "^7.11.0",
