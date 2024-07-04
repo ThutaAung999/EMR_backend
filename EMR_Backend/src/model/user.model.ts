@@ -9,7 +9,7 @@ export interface IUser extends Document {
   _id: string;
   name: string;
   email: string;
-  photo?: string;
+  userImage?: string;
   role: "user" | "guide" | "lead-guide" | "admin";
   password?: string;
   passwordConfirm?: string;
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema<IUser>({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
   },
-  photo: {
+  userImage: {
     type: String,
     default: "default.jpg",
   },

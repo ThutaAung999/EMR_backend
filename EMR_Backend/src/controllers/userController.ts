@@ -28,7 +28,8 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-export const uploadUserPhoto = upload.single('photo');
+export const uploadUserPhoto = upload.single('userImage');
+//export const uploadUserPhoto = upload.single('photo');
 
 export const resizeUserPhoto = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const reqMulter = req as MulterRequest;
@@ -93,6 +94,7 @@ export const deleteMe = catchAsync(async (req: Request, res: Response, next: Nex
   });
 });
 
+//This is OK
 export const createUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: 'Error',
@@ -101,6 +103,9 @@ export const createUser = (req: Request, res: Response) => {
 };
 
 export const getUser = factory.getOne(User as Model<IUser>);
+
+//This is OK
 export const getAllUsers = factory.getAll(User as Model<IUser>);
+
 export const updateUser = factory.updateOne(User as Model<IUser>);
 export const deleteUser = factory.deleteOne(User as Model<IUser>);

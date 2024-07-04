@@ -30,6 +30,7 @@ const Login: React.FC = () => {
       setAuth({
         token: response.data.token,
         isAuthenticated: true,
+        userImage:response.data.userImage,
       });
       setNotification({ message: 'Login successful!', type: 'success' });
       navigate('/'); // Redirect to the home page upon successful login

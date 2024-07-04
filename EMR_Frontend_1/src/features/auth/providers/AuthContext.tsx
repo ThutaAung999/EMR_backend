@@ -23,6 +23,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [auth, setAuth] = useState({
     token: localStorage.getItem('token'),
     isAuthenticated: !!localStorage.getItem('token'),
+    userImage: localStorage.getItem('userImage'),
+
   });
 
   useEffect(() => {
@@ -31,7 +33,14 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } else {
       localStorage.removeItem('token');
     }
-  }, [auth.token]);
+
+    if(auth.userImage){
+      localStorage.setItem('userImage', auth.userImage);
+    }else{
+      localStorage.removeItem('userImage');
+    }
+
+  }, [auth.token, auth.userImage]);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
