@@ -26,35 +26,83 @@ const Main: React.FC<{ activeNavIndex: number; navItems: NavItem[] }> = ({
 
       <div className="w-full flex-grow flex flex-col justify-start items-center gap-2 p-4">
         <Routes>
-          <Route path="/signup"  element={<Signup/>}/>
-          <Route path="/login"  element={<Login/>}/>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           {/* 
           <Route path="/" element={<Dashboard />} /> */}
-          
+
           <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-          <Route path="/patients" element={<PatientList />} />
-          <Route path="/patients/create" element={<CreatePatient />} />
-          <Route path="/medicines" element={<MedicineList />} />
-          <Route path="/diseases" element={<DiseaseList />} />
-          <Route path="/emrs" element={<EmrList />} />
-          <Route path="/emrs/create" element={<CreateEmr />} />
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/patients"
+            element={
+              <ProtectedRoute>
+                <PatientList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/patients/create"
+            element={
+              <ProtectedRoute>
+                <CreatePatient />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/medicines"
+            element={
+              <ProtectedRoute>
+                <MedicineList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/diseases"
+            element={
+              <ProtectedRoute>
+                <DiseaseList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/emrs"
+            element={
+              <ProtectedRoute>
+                <EmrList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/emrs/create"
+            element={
+              <ProtectedRoute>
+                <CreateEmr />
+              </ProtectedRoute>
+            }
+          />
 
           {/* <Route path="/emrs/create" element={<CreateEmrForm />} /> */}
 
-          <Route path="/tags" element={<TagList />} />
-
+          <Route
+            path="/tags"
+            element={
+              <ProtectedRoute>
+                <TagList />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
       <Footer />
-
-
     </section>
   );
 };
