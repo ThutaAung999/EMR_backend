@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import instance from '../../../utils/axios'; // Import the custom Axios instance
 import { useForm } from '@mantine/form';
 import { TextInput, PasswordInput, Button, Paper, Title, Container } from '@mantine/core';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../providers/AuthContext';
 
 const Signup: React.FC = () => {
+
+  const { setAuth } = useContext(AuthContext)!;
+  const [notification, setNotification] = React.useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const navigate = useNavigate();
+
   const form = useForm({
     initialValues: {
       name: '',
@@ -27,6 +34,13 @@ const Signup: React.FC = () => {
 
       // Log the success message and response data
       console.log('Registration successful:', response.data);
+      setAuth({
+        token: response.data.token,
+        isAuthenticated: true,
+      });
+
+      setNotification({ message: 'Signup  successful!', type: 'success' });
+      navigate('/'); // Redirect to the home page upon successful signup
 
       // Optionally, handle successful registration (e.g., redirect or show success message)
       // Example: Redirect to login page after successful registration
@@ -35,6 +49,8 @@ const Signup: React.FC = () => {
       // Log the error message
       console.error('Registration error:', error);
 
+      setNotification({ message: 'Login failed. Please check your credentials and try again.', type: 'error' });
+      form.reset();
       // Handle error (e.g., show error message to the user)
       // Example: Show an error message using a toast notification library
       // showToast('error', 'Registration failed. Please try again.');
@@ -74,6 +90,10 @@ const Signup: React.FC = () => {
             Sign Up
           </Button>
         </form>
+        <div className="mt-6 text-center">
+          sign in instead <Link to="/login" className="text-blue-500 hover:underline">Sign in</Link>
+        </div>
+
       </Paper>
     </Container>
   );

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import instance from '../../../utils/axios'; // Import the custom Axios instance
 import { useForm } from '@mantine/form';
 import { TextInput, PasswordInput, Button, Paper, Title, Container, Notification } from '@mantine/core';
@@ -71,6 +71,9 @@ const Login: React.FC = () => {
             Log In
           </Button>
         </form>
+        <div className="mt-6 text-center">
+          Don't have an account? <Link to="/signup" className="text-blue-500 hover:underline">Sign Up</Link>
+        </div>
       </Paper>
     </Container>
   );

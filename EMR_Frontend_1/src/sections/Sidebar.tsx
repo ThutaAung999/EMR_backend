@@ -6,6 +6,9 @@ import { FaArrowRight, FaUserFriends } from "react-icons/fa";
 import { AiOutlineTag } from "react-icons/ai";
 import { NavLink, useLocation } from "react-router-dom";
 import { NavItem } from "../App";
+import { useNavigate } from "react-router-dom";
+
+
 
 const variants = {
   expanded: { width: "15%" },
@@ -41,6 +44,7 @@ const Sidebar: React.FC<{
 }> = ({ activeNavIndex, setActiveNavIndex, navItems }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,6 +69,15 @@ const Sidebar: React.FC<{
     );
     setActiveNavIndex(activeIndex !== -1 ? activeIndex : 0);
   }, [location, navItems, setActiveNavIndex]);
+
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Clear the token from local storage
+    navigate("/login"); // Redirect to the login page
+  };
+  
+
 
   return (
     <motion.section
@@ -135,9 +148,11 @@ const Sidebar: React.FC<{
         </div>
       </div>
 
+          
       <div
-        id="logout-box"
-        className="w-full flex flex-col justify-start items-center gap-4 cursor-pointer"
+          id="logout-box"
+          className="w-full flex flex-col justify-start items-center gap-4 cursor-pointer"
+          onClick={handleLogout}
       >
         <div className="bg-green-700 w-full h-[0.5px]"></div>
         <div className="flex justify-center items-center gap-2">

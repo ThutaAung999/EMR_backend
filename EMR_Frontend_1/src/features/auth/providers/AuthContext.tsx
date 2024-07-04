@@ -4,10 +4,12 @@ interface AuthContextType {
   auth: {
     token: string | null;
     isAuthenticated: boolean;
+     userImage: string | null;
   };
   setAuth: React.Dispatch<React.SetStateAction<{
     token: string | null;
     isAuthenticated: boolean;
+    userImage: string | null;
   }>>;
 }
 
