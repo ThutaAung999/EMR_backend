@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config()
+
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import createError from 'http-errors';
@@ -5,7 +8,7 @@ import helmet from 'helmet';
 import logger from 'morgan';
 import mongoose from 'mongoose';
 import multer from 'multer';
-import dotenv from 'dotenv';
+
 import cors from 'cors';
 import fs from 'fs';
 import cookieParser from 'cookie-parser';
@@ -33,7 +36,7 @@ import HttpLoggerMiddleware from './middleware/http.logger.middleware';
 
 
 // Load the .env file
-dotenv.config({ path: path.join(__dirname, '..', 'config.env') });
+//dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 
 
