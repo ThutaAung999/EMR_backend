@@ -121,6 +121,8 @@ export const logout = (req: Request, res: Response): void => {
   res.status(200).json({ status: "success" });
 };
 
+
+
 export const protect = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     let token: string | undefined;
