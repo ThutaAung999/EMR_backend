@@ -21,7 +21,15 @@ export const getAllDiseasesWithPagination = async (
   query: GetDiseasesQuery
 ): Promise<{ data: IDisease[]; total: number }> => {
   const { page, limit, search, sortBy, sortOrder } = query;
-  const searchQuery = search ? { name: { $regex: search, $options: "i" } } : {};
+
+  const searchQuery = search
+      ? {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } }
+        ]
+      }
+      : {};
   const sortQuery = sortBy ? { [sortBy]: sortOrder === "asc" ? 1 : -1 } : {};
 
   const [data, total] = await Promise.all([
