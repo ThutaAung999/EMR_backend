@@ -1,30 +1,67 @@
-import Disease ,{IDisease} from "../model/diasease.model";
-import Patient, {IPatient} from "../model/patient.model";
+import Disease, { IDisease } from "../model/diasease.model";
 
-export const getAllDiseases = async () : Promise<IDisease[]> =>{
-    return Disease.find().exec();
-}
-
-export const getDiseaseById = async (diseaseId : string) : Promise<IDisease | null> =>{
-    return Disease.findById(diseaseId).exec();
-}
-
-
-export const newDisease = async (disease: IDisease): Promise<IDisease> => {
-    const newDisease = new Disease(disease);
-    return newDisease.save();
+//before updating
+export const getAllDiseases = async (): Promise<IDisease[]> => {
+  return Disease.find().exec();
 };
 
+//------------------------------------------------------------------------------------------------
 
-export const updateDisease = async(diseaseId : string , disease : IDisease) :Promise<IDisease>=>{
-    const newDisease = <IDisease>await Disease.findByIdAndUpdate(diseaseId,disease,{new:true});
+//after updating
 
-    //return newDisease as IPatient;   //   This way  works  also.
-    return newDisease;
+interface GetDiseasesQuery {
+  page: number;
+  limit: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
-export const deleteDisease = async(diseaseId: String):Promise<IDisease>=>{
-    const deletedDisease = await Disease.findByIdAndDelete(diseaseId);
+export const getAllDiseasesWithPagination = async (
+  query: GetDiseasesQuery
+): Promise<{ data: IDisease[]; total: number }> => {
+  const { page, limit, search, sortBy, sortOrder } = query;
+  const searchQuery = search ? { name: { $regex: search, $options: "i" } } : {};
+  const sortQuery = sortBy ? { [sortBy]: sortOrder === "asc" ? 1 : -1 } : {};
 
-    return deletedDisease as IDisease;
-}
+  const [data, total] = await Promise.all([
+    Disease.find(searchQuery)
+    .sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here  
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec(),
+    Disease.countDocuments(searchQuery).exec(),
+  ]);
+
+  return { data, total };
+};
+
+//-----------------------------------------------------------------------------------------
+export const getDiseaseById = async (
+  diseaseId: string
+): Promise<IDisease | null> => {
+  return Disease.findById(diseaseId).exec();
+};
+
+export const newDisease = async (disease: IDisease): Promise<IDisease> => {
+  const newDisease = new Disease(disease);
+  return newDisease.save();
+};
+
+export const updateDisease = async (
+  diseaseId: string,
+  disease: IDisease
+): Promise<IDisease> => {
+  console.log("disease :", disease);
+  const newDisease = <IDisease>(
+    await Disease.findByIdAndUpdate(diseaseId, disease, { new: true })
+  );
+
+  return newDisease;
+};
+
+export const deleteDisease = async (diseaseId: String): Promise<IDisease> => {
+  const deletedDisease = await Disease.findByIdAndDelete(diseaseId);
+
+  return deletedDisease as IDisease;
+};

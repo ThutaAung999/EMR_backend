@@ -15,10 +15,11 @@ const handle = (func: Function, httpErrorCode: number) => {
 };
 
 
-export const getAllDiseaseHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
+/*************************/
+//before updating
+/* export const getAllDiseaseHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const diseases = await diseaseService.getAllDiseases();
-
         if (!diseases) {
             throw new Error('No diseases');
         }
@@ -31,6 +32,43 @@ export const getAllDiseaseHandler = async (req: IRequest, res: IResponse, next: 
 export const getAllDiseases = async (req: IRequest, res: IResponse, next: NextFunction) => {
     await handle(getAllDiseaseHandler, 400)(req, res, next);
 };
+ */
+
+
+
+//------------------------------------------------------------------------------------------------
+//after updating
+
+
+
+export const getAllDiseaseHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    try {
+        const { page = 1, limit = 5, search = "", sortBy,sortOrder } = req.query;
+
+        const query = {
+            page: Number(page),
+            limit: Number(limit),
+            search: search as string,
+            sortBy: sortBy as string,
+            sortOrder: sortOrder as 'asc' | 'desc',
+          };
+
+        const { data, total } = await diseaseService.getAllDiseasesWithPagination(query);
+
+
+        res.status(200).json({ data, total, page: query.page, totalPages: Math.ceil(total / query.limit) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const getAllDiseasesWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    await handle(getAllDiseaseHandlerWithPagination, 400)(req, res, next);
+  };
+
+
+//------------------------------------------------------------------------------------------------
 
 
 
@@ -95,6 +133,8 @@ export const updateDisease = async (req: IRequest, res: IResponse, next: NextFun
         await res.status(400).json({message: err})
     }
 }
+
+
 
 
 export const deleteDisease = async (req: IRequest, res: IResponse, next: NextFunction) => {
