@@ -14,3 +14,4 @@ router.patch("/:medicineId",updateMedicine)
 router.delete('/:medicineId',deleteMedicine);
 
 export default router;
+
