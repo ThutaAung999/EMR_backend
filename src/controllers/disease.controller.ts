@@ -39,8 +39,6 @@ export const getAllDiseases = async (req: IRequest, res: IResponse, next: NextFu
 //------------------------------------------------------------------------------------------------
 //after updating
 
-
-
 export const getAllDiseaseHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const { page = 1, limit = 5, search = "", sortBy,sortOrder } = req.query;

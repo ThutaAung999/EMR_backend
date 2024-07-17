@@ -37,6 +37,7 @@ export const getAllDiseasesWithPagination = async (
     .sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here  
       .skip((page - 1) * limit)
       .limit(limit)
+      .populate('medicines')
       .exec(),
     Disease.countDocuments(searchQuery).exec(),
   ]);

@@ -4,14 +4,61 @@ import Patient, {IPatient} from "../model/patient.model";
 import {getAllPatient} from "./patient.service";
 
 
-
+//before updating
 export const getAllMidicine = async (): Promise<IMedicine[]> => {
     return MedicineModel.find().
         populate("diseases").exec();
 };
 
+
+//------------------------------------------------------------------------------------------------
+
+//after updating
+
+interface GetMedicinesQuery {
+    page: number;
+    limit: number;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  }
+  
+  export const getAllMedicinesWithPagination = async (
+    query: GetMedicinesQuery
+  ): Promise<{ data: IMedicine[]; total: number }> => {
+    const { page, limit, search, sortBy, sortOrder } = query;
+  
+    const searchQuery = search
+        ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { manufacturer: { $regex: search, $options: "i" } }
+          ]
+        }
+        : {};
+    const sortQuery = sortBy ? { [sortBy]: sortOrder === "asc" ? 1 : -1 } : {};
+  
+    const [data, total] = await Promise.all([
+      MedicineModel.find(searchQuery)
+      .sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here  
+        .skip((page - 1) * limit)
+        .limit(limit)
+          .populate('diseases')
+        .exec(),
+      MedicineModel.countDocuments(searchQuery)
+          .exec(),
+    ]);
+  
+    return { data, total };
+  };
+  
+  //-----------------------------------------------------------------------------------------
+  
+
+
+
 export const getMedicineById = async (medicineId: string): Promise<IMedicine | null> => {
-    return MedicineModel.findById(medicineId).exec();
+    return MedicineModel.findById(medicineId).populate('diseases').exec();
 };
 
 

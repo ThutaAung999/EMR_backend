@@ -14,6 +14,7 @@ const handle = (func: Function, httpErrorCode: number) => {
     };
 };
 
+
 export const getAllMedicineHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const medicines = await medicineService.getAllMidicine();
@@ -43,11 +44,47 @@ export const getMedicineByIdHandler = async (req: IRequest, res: IResponse, next
 
 }
 
+
+//------------------------------------------------------------------------------------------------
+//after updating
+
+
+export const getAllMedicineHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    console.log('backend  :  req.query',req.query)
+    try {
+        const { page = 1, limit = 5, search = "", sortBy,sortOrder } = req.query;
+
+        const query = {
+            page: Number(page),
+            limit: Number(limit),
+            search: search as string,
+            sortBy: sortBy as string,
+            sortOrder: sortOrder as 'asc' | 'desc',
+          };
+
+        const { data, total } = await medicineService.getAllMedicinesWithPagination(query);
+
+
+        res.status(200).json({ data, total, page: query.page, totalPages: Math.ceil(total / query.limit) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const getAllMedicinesWithPagination =
+    async (req: IRequest, res: IResponse, next: NextFunction) => {
+    await handle(getAllMedicineHandlerWithPagination, 400)(req, res, next);
+  };
+
+
+//------------------------------------------------------------------------------------------------
+
+
 export const getMedicineById = async (req: IRequest, res: IResponse, next: NextFunction) => {
     await handle(getMedicineByIdHandler, 404)
     (req, res, next);
 }
-
 
 export const findMedicineByName = async (req: IRequest, res: IResponse, next: NextFunction) => {
     let name = req.params['name'];
