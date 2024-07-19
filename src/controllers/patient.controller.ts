@@ -18,6 +18,7 @@ const handle = (func: Function, httpErrorCode: number) => {
     };
 };
 
+//before updating
 export const getAllPatientHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const patients = await patientService.getAllPatient();
@@ -33,6 +34,73 @@ export const getAllPatientHandler = async (req: IRequest, res: IResponse, next: 
 export const getAllPatients = async (req: IRequest, res: IResponse, next: NextFunction) => {
     await handle(getAllPatientHandler, 400)(req, res, next);
 };
+
+
+//------------------------------------------------------------------------------------------------
+//after updating
+
+/* export const getAllPatientHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    console.log('backend  :  req.query',req.query)
+    try {
+        const { page = 1, limit = 5, search = "", sortBy,sortOrder } = req.query;
+
+        const query = {
+            page: Number(page),
+            limit: Number(limit),
+            search: search as string,
+            sortBy: sortBy as string,
+            sortOrder: sortOrder as 'asc' | 'desc',
+          };
+
+        const { data, total } = await patientService.getAllPatientsWithPagination(query);
+
+
+        res.status(200).json({ data, total, page: query.page, totalPages: Math.ceil(total / query.limit) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const getAllPatientsWithPagination =
+    async (req: IRequest, res: IResponse, next: NextFunction) => {
+    await handle(getAllPatientHandlerWithPagination, 500)(req, res, next);
+  };
+
+ */
+
+
+
+export const getAllPatientHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    console.log('backend  :  req.query', req.query);
+    try {
+      const { page = 1, limit = 5, search = '', sortBy, sortOrder } = req.query;
+  
+      const query = {
+        page: Number(page),
+        limit: Number(limit),
+        search: search as string,
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc',
+      };
+  
+      const { data, total } = await patientService.getAllPatientsWithPagination(query);
+  
+      res.status(200).json({ data, total, page: query.page, totalPages: Math.ceil(total / query.limit) });
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  export const getAllPatientsWithPaginationHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    await handle(getAllPatientHandlerWithPagination, 500)(req, res, next);
+  };
+
+
+//------------------------------------------------------------------------------------------------
+
+
+
 
 export const getPatientByIdHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
 

@@ -26,7 +26,7 @@ import doctorRouter from './routes/doctors.route';
 import tagRouter from './routes/tags.route';
 import emrImageRouter from './routes/emr.images.route';
 import emrRouter from './routes/emr.route';
-import userRouter from './routes/userRoute';//This may be doctors
+import userRouter from './routes/user.route';//This may be doctors
 
 
 import AppError from './utils/appError';

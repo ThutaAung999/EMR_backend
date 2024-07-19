@@ -14,6 +14,7 @@ const handle = (func: Function, httpErrorCode: number) => {
     };
 };
 
+//before updating
 export const getAllEMRHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const emrs = await emrService.getAllEMR();
@@ -33,6 +34,39 @@ export const getAllEMRs = async (req: IRequest, res: IResponse, next: NextFuncti
     await handle(getAllEMRHandler, 400)(req, res, next);
 };
 
+//==============  
+//After updating
+
+export const getAllEmrHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    console.log('backend  :  req.query',req.query)
+    try {
+        const { page = 1, limit = 5, search = "", sortBy,sortOrder } = req.query;
+
+        const query = {
+            page: Number(page),
+            limit: Number(limit),
+            search: search as string,
+            sortBy: sortBy as string,
+            sortOrder: sortOrder as 'asc' | 'desc',
+          };
+
+        const { data, total } = await emrService.getAllEmrsWithPagination(query);
+
+
+        res.status(200).json({ data, total, page: query.page, totalPages: Math.ceil(total / query.limit) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const getAllEmrWithPagination =
+    async (req: IRequest, res: IResponse, next: NextFunction) => {
+    await handle(getAllEmrHandlerWithPagination, 400)(req, res, next);
+  };
+
+
+//===============
 
 
 export const getEMRByIdHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {

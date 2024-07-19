@@ -1,11 +1,64 @@
 import Patient, {IPatient } from '../model/patient.model';
 import {zodPatientUpdateSchema} from '../schema/patient.schema'
 
+//before updating 
 export const getAllPatient = async (): Promise<IPatient[]> => {
     return Patient.find()
     .populate('doctors')
     .populate('diseases').exec();
 };
+
+
+//________________________________________________________________
+//After updating
+
+interface GetPatientsQuery {
+    page: number;
+    limit: number;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  }
+
+
+
+export const getAllPatientsWithPagination = async (
+    query: GetPatientsQuery
+): Promise<{ data: IPatient[]; total: number }> => {
+    const { page, limit, search, sortBy, sortOrder } = query;
+
+    let searchQuery: any = {};
+
+    if (search) {
+        const searchNumber = Number(search);
+        if (!isNaN(searchNumber)) {
+            searchQuery.age = searchNumber;
+        } else {
+            searchQuery.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { "diseases.name": { $regex: search, $options: "i" } },
+                { "doctors.name": { $regex: search, $options: "i" } },
+            ];
+        }
+    }
+
+    const sortQuery = sortBy ? { [sortBy]: sortOrder === "asc" ? 1 : -1 } : {};
+
+    const [data, total] = await Promise.all([
+        Patient.find(searchQuery)
+            .sort(sortQuery as { [key: string]: 1 | -1 })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate('diseases')
+            .populate('doctors')
+            .exec(),
+        Patient.countDocuments(searchQuery).exec(),
+    ]);
+
+    return { data, total };
+};
+
+//________________________________________________________________
 
 export const getPatientById = async (patientId: string): Promise<IPatient | null> => {
     return Patient.findById(patientId).exec();

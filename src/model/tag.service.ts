@@ -9,6 +9,6 @@ const TagSchema: Schema = new Schema({
     name: { type: String, required: true }
 });
 
-const Tag: Model<ITag> = mongoose.model<ITag>('Tags', TagSchema);
+const TagService: Model<ITag> = mongoose.model<ITag>('Tags', TagSchema);
 
-export default Tag;
+export default TagService;

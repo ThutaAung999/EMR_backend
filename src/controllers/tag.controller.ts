@@ -1,4 +1,4 @@
-import {IRequest, IResponse} from '../types/types'
+    import {IRequest, IResponse} from '../types/types'
 import {NextFunction} from "express";
 
 import * as tagService from '../services/tag.service';
@@ -15,6 +15,7 @@ const handle = (func: Function, httpErrorCode: number) => {
     };
 };
 
+//BEFORE UPDATing
 export const getAllTagHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const tags = await tagService.getAllTag() ;
@@ -34,6 +35,39 @@ export const getAllTags = async (req: IRequest, res: IResponse, next: NextFuncti
     await handle(getAllTagHandler, 400)(req, res, next);
 };
 
+
+
+//================================================================================================================================
+//After updating
+
+export const getAllTagHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    console.log('backend  :  req.query', req.query);
+    try {
+      const { page = 1, limit = 5, search = '', sortBy, sortOrder } = req.query;
+  
+      const query = {
+        page: Number(page),
+        limit: Number(limit),
+        search: search as string,
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc',
+      };
+  
+      const { data, total } = await tagService.getAllTagsWithPagination(query);
+  
+      res.status(200).json({ data, total, page: query.page, totalPages: Math.ceil(total / query.limit) });
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  export const getAllTagsWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+    await handle(getAllTagHandlerWithPagination, 500)(req, res, next);
+  };
+
+
+
+//================================================================================================================================
 
 
 export const getTagByIdHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
@@ -92,7 +126,7 @@ export const updateTag = async (req: IRequest, res: IResponse, next: NextFunctio
     try {
         const updateTag = await tagService.updateTag(tagId,tag);
 
-        if (!updateTag) throw Error('Cannot update Tag');
+        if (!updateTag) throw Error('Cannot update TagService');
         await res.status(200).json(updateTag);
 
     } catch (err) {

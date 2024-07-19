@@ -6,7 +6,9 @@ import * as Auth from "../controllers/authController";
 import {
   deletePatient,
   findPatientByName,
-  getAllPatients,
+//  getAllPatients,
+  //getAllPatientsWithPagination,
+  getAllPatientsWithPaginationHandler,
   getPatientById,
   newPatient,
   updatePatient,
@@ -21,17 +23,15 @@ import {
 
 const router: Router = express.Router();
 
-router.get('/', getAllPatients);
+//router.get('/', getAllPatients);
 
+//router.get('/',getAllPatientsWithPagination)
+router.get('/',getAllPatientsWithPaginationHandler)
 /* router.route("/").
     get(Auth.protect, getAllPatients);
  */
+
 router.get("/:patientId", getPatientById);
-
-/* router.route("/:patientId")
-    .get(Auth.protect, getPatientById);
- */
-
 router.get("/name/:name", findPatientByName); //return empty array  ( [] ) ,  why?
 router.post("/", validateZodSchema(zodPatientSchema), newPatient);
 router.patch(

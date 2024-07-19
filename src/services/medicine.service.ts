@@ -10,9 +10,7 @@ export const getAllMidicine = async (): Promise<IMedicine[]> => {
         populate("diseases").exec();
 };
 
-
 //------------------------------------------------------------------------------------------------
-
 //after updating
 
 interface GetMedicinesQuery {
@@ -22,39 +20,42 @@ interface GetMedicinesQuery {
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }
-  
-  export const getAllMedicinesWithPagination = async (
-    query: GetMedicinesQuery
-  ): Promise<{ data: IMedicine[]; total: number }> => {
-    const { page, limit, search, sortBy, sortOrder } = query;
-  
-    const searchQuery = search
-        ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { manufacturer: { $regex: search, $options: "i" } }
-          ]
-        }
-        : {};
-    const sortQuery = sortBy ? { [sortBy]: sortOrder === "asc" ? 1 : -1 } : {};
-  
-    const [data, total] = await Promise.all([
-      MedicineModel.find(searchQuery)
-      .sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here  
-        .skip((page - 1) * limit)
-        .limit(limit)
-          .populate('diseases')
-        .exec(),
-      MedicineModel.countDocuments(searchQuery)
-          .exec(),
-    ]);
-  
-    return { data, total };
-  };
-  
-  //-----------------------------------------------------------------------------------------
-  
 
+      export const getAllMedicinesWithPagination = async (
+        query: GetMedicinesQuery
+      ): Promise<{ data: IMedicine[]; total: number }> => {
+        const { page, limit, search, sortBy, sortOrder } = query;
+
+          // Create the base match query
+          const matchQuery: any = {};
+
+        const searchQuery = search
+            ? {
+              $or: [
+                { name: { $regex: search, $options: "i" } },
+                { manufacturer: { $regex: search, $options: "i" } },
+                  { "diseases.name": { $regex: search, $options: "i" } },
+              ]
+            }
+            : {};
+
+        const sortQuery = sortBy ? { [sortBy]: sortOrder === "asc" ? 1 : -1 } : {};
+
+        const [data, total] = await Promise.all([
+          MedicineModel.find(searchQuery)
+          .sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here
+            .skip((page - 1) * limit)
+            .limit(limit)
+              .populate('diseases')
+            .exec(),
+          MedicineModel.countDocuments(searchQuery)
+              .exec(),
+        ]);
+
+        return { data, total };
+      };
+
+  //-----------------------------------------------------------------------------------------
 
 
 export const getMedicineById = async (medicineId: string): Promise<IMedicine | null> => {
