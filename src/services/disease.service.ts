@@ -1,4 +1,5 @@
 import Disease, { IDisease } from "../model/diasease.model";
+import {GetQueryForPagination} from './GetQueryForPagination'
 
 //before updating
 export const getAllDiseases = async (): Promise<IDisease[]> => {
@@ -9,16 +10,8 @@ export const getAllDiseases = async (): Promise<IDisease[]> => {
 
 //after updating
 
-interface GetDiseasesQuery {
-  page: number;
-  limit: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
 export const getAllDiseasesWithPagination = async (
-  query: GetDiseasesQuery
+  query: GetQueryForPagination
 ): Promise<{ data: IDisease[]; total: number }> => {
   const { page, limit, search, sortBy, sortOrder } = query;
 

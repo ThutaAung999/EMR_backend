@@ -1,4 +1,9 @@
 import EmrModel ,{IEMR} from '../model/emr.model'
+import {GetQueryForPagination} from './GetQueryForPagination'
+import Disease from "../model/diasease.model";
+import MedicineModel from "../model/medicine.model";
+import Patient from "../model/patient.model";
+
 
 //before updating
 export const getAllEMR = async () : Promise<IEMR[]> =>{
@@ -9,21 +14,10 @@ export const getAllEMR = async () : Promise<IEMR[]> =>{
         populate('emrImages.tags').
     exec();
 }
-
-
 //================================================================================================
 //after updating
-
-interface GetEmrsQuery {
-    page: number;
-    limit: number;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  }
-
   export const getAllEmrsWithPagination = async (
-    query: GetEmrsQuery
+    query: GetQueryForPagination
   ): Promise<{ data: IEMR[]; total: number }> => {
     const { page, limit, search, sortBy, sortOrder } = query;
     
@@ -33,10 +27,12 @@ interface GetEmrsQuery {
           $or: [
             { name: { $regex: search, $options: "i" } },
             { manufacturer: { $regex: search, $options: "i" } },
-              { "diseases.name": { $regex: search, $options: "i" } },
-              { "medicines.name": { $regex: search, $options: "i" } },
-              { "patients.name": { $regex: search, $options: "i" } },
-    
+              { "diseases":
+                      { $in: await Disease.find({ name: { $regex: search, $options: "i" } }).select('_id') } },
+              { "medicines":
+                      { $in: await MedicineModel.find({ name: { $regex: search, $options: "i" } }).select('_id') } },
+              { "patients":
+                      { $in: await Patient.find({ name: { $regex: search, $options: "i" } }).select('_id') } },
           ]
         }
         : {};

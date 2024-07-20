@@ -1,23 +1,15 @@
 import TagService, {ITag} from '../model/tag.service'
+import {GetQueryForPagination} from './GetQueryForPagination'
 
-
+//before
 export const getAllTag = async (): Promise<ITag[]> => {
     return TagService.find().exec();
 }
 
 //================================================================================================================================
 //After updating
-
-interface GetTagsQuery {
-    page: number;
-    limit: number;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  }
-
   export const getAllTagsWithPagination = async (
-    query: GetTagsQuery
+    query: GetQueryForPagination
   ): Promise<{ data: ITag[]; total: number }> => {
     const { page, limit, search, sortBy, sortOrder } = query;
 

@@ -1,5 +1,8 @@
 import Patient, {IPatient } from '../model/patient.model';
 import {zodPatientUpdateSchema} from '../schema/patient.schema'
+import {GetQueryForPagination} from './GetQueryForPagination'
+import Disease from "../model/diasease.model";
+import DoctorModel from "../model/doctor.model";
 
 //before updating 
 export const getAllPatient = async (): Promise<IPatient[]> => {
@@ -12,18 +15,8 @@ export const getAllPatient = async (): Promise<IPatient[]> => {
 //________________________________________________________________
 //After updating
 
-interface GetPatientsQuery {
-    page: number;
-    limit: number;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-  }
-
-
-
 export const getAllPatientsWithPagination = async (
-    query: GetPatientsQuery
+    query: GetQueryForPagination
 ): Promise<{ data: IPatient[]; total: number }> => {
     const { page, limit, search, sortBy, sortOrder } = query;
 
@@ -36,8 +29,11 @@ export const getAllPatientsWithPagination = async (
         } else {
             searchQuery.$or = [
                 { name: { $regex: search, $options: "i" } },
-                { "diseases.name": { $regex: search, $options: "i" } },
-                { "doctors.name": { $regex: search, $options: "i" } },
+                { "diseases":
+                        { $in: await Disease.find({ name: { $regex: search, $options: "i" } }).select('_id') } },
+                { "doctors":
+                        { $in: await DoctorModel.find({ name: { $regex: search, $options: "i" } }).select('_id') } }
+
             ];
         }
     }

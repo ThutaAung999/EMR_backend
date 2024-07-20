@@ -14,28 +14,6 @@ const handle = (func: Function, httpErrorCode: number) => {
     };
 };
 
-
-/*************************/
-//before updating
-/* export const getAllDiseaseHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
-    try {
-        const diseases = await diseaseService.getAllDiseases();
-        if (!diseases) {
-            throw new Error('No diseases');
-        }
-        res.status(200).json(diseases);
-    } catch (err) {
-        next(err);
-    }
-};
-
-export const getAllDiseases = async (req: IRequest, res: IResponse, next: NextFunction) => {
-    await handle(getAllDiseaseHandler, 400)(req, res, next);
-};
- */
-
-
-
 //------------------------------------------------------------------------------------------------
 //after updating
 

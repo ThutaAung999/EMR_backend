@@ -28,26 +28,9 @@ export const getAllMedicineHandler = async (req: IRequest, res: IResponse, next:
     }
 };
 
-export const getAllMedicines = async (req: IRequest, res: IResponse, next: NextFunction) => {
-    await handle(getAllMedicineHandler, 400)(req, res, next);
-};
-
-export const getMedicineByIdHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
-
-    let medicineId = req.params['medicineId'];
-    console.log('Req medicine Id :', medicineId);
-
-    const medicine = await medicineService.getMedicineById(medicineId);
-
-    if (!medicine) throw Error('No MedicineModel found you search by id :'+medicineId);
-    await res.status(200).json(medicine);
-
-}
-
 
 //------------------------------------------------------------------------------------------------
 //after updating
-
 
 export const getAllMedicineHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
     console.log('backend  :  req.query',req.query)
@@ -79,6 +62,18 @@ export const getAllMedicinesWithPagination =
 
 
 //------------------------------------------------------------------------------------------------
+
+export const getMedicineByIdHandler = async (req: IRequest, res: IResponse, next: NextFunction) => {
+
+    let medicineId = req.params['medicineId'];
+    console.log('Req medicine Id :', medicineId);
+
+    const medicine = await medicineService.getMedicineById(medicineId);
+
+    if (!medicine) throw Error('No MedicineModel found you search by id :'+medicineId);
+    await res.status(200).json(medicine);
+
+}
 
 
 export const getMedicineById = async (req: IRequest, res: IResponse, next: NextFunction) => {
