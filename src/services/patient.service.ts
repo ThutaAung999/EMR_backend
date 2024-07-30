@@ -107,8 +107,7 @@ export const updatePatient = async (patientId: string, patient: IPatient): Promi
 
     const newPatient = <IPatient>await Patient.findByIdAndUpdate(patientId, {
         ...patient,
-        updatedAt: new Date(), // Ensure updatedAt is updated
-      
+        updatedAt: new Date(),
     },
         {new: true});
 

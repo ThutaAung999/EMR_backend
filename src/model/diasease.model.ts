@@ -6,6 +6,8 @@ export interface IDisease extends Document {
     description?: string;
     patients: mongoose.Types.ObjectId[];
     medicines: mongoose.Types.ObjectId[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const diseaseSchema: Schema<IDisease> = new Schema({
@@ -18,7 +20,11 @@ const diseaseSchema: Schema<IDisease> = new Schema({
     },
     patients: [{ type: Schema.Types.ObjectId, ref: 'Patients' }],
     medicines: [{ type: Schema.Types.ObjectId, ref: 'Medicines' }]
-});
+},
+    {
+        timestamps: true
+    }
+);
 
 const Disease: Model<IDisease> = mongoose.model<IDisease>('Diseases', diseaseSchema);
 

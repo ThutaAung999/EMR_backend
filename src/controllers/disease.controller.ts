@@ -17,7 +17,8 @@ const handle = (func: Function, httpErrorCode: number) => {
 //------------------------------------------------------------------------------------------------
 //after updating
 
-export const getAllDiseaseHandlerWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+export const getAllDiseaseHandlerWithPagination =
+    async (req: IRequest, res: IResponse, next: NextFunction) => {
     try {
         const { page = 1, limit = 5, search = "", sortBy,sortOrder } = req.query;
 
@@ -39,7 +40,8 @@ export const getAllDiseaseHandlerWithPagination = async (req: IRequest, res: IRe
 };
 
 
-export const getAllDiseasesWithPagination = async (req: IRequest, res: IResponse, next: NextFunction) => {
+export const getAllDiseasesWithPagination =
+    async (req: IRequest, res: IResponse, next: NextFunction) => {
     await handle(getAllDiseaseHandlerWithPagination, 400)(req, res, next);
   };
 

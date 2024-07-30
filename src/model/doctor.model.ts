@@ -6,6 +6,8 @@ export interface IDoctor extends Document {
     name: string;
     specialty: string;
     patients: mongoose.Types.ObjectId[] | IPatient;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const doctorSchema: Schema<IDoctor> = new Schema({
@@ -18,7 +20,12 @@ const doctorSchema: Schema<IDoctor> = new Schema({
         required: true
     },
     patients: [{ type: Schema.Types.ObjectId, ref: 'Patients' }]
-});
+},
+    {
+        timestamps:true
+    }
+
+);
 
 const DoctorModel: Model<IDoctor> = mongoose.model<IDoctor>('Doctors', doctorSchema);
 

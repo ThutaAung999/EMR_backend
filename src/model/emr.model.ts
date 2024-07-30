@@ -15,6 +15,9 @@ export interface IEMR extends Document {
     medicines: mongoose.Types.ObjectId[];
     emrImages?:EmrImage[];
     notes?: string;
+
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 
@@ -31,7 +34,11 @@ const emrSchema: Schema<IEMR> = new Schema({
     //emrImages: [{ type: Schema.Types.ObjectId, ref:'EMRImages'}],
     emrImages: [EmrImageSchema],
     notes: { type: String }
-});
+},
+    {
+        timestamps   :true
+    }
+);
 
 const EmrModel: Model<IEMR> = mongoose.model<IEMR>('EMRs', emrSchema);
 

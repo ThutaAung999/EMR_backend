@@ -17,7 +17,12 @@ export const newDoctor = async (doctor: IDoctor): Promise<IDoctor> => {
 
 export const updateDoctor = async(doctorId : string , doctor : IDoctor) :Promise<IDoctor>=>{
 
-    const newDoctor = <IDoctor>await DoctorModel.findByIdAndUpdate(doctorId,doctor,{new:true});
+    const newDoctor = <IDoctor>await DoctorModel.findByIdAndUpdate(doctorId,
+        {
+            ...doctor,
+            updatedAt: new Date(),
+        }
+        ,{new:true});
 
     console.log("newDoctor",newDoctor)
     return newDoctor as IDoctor;

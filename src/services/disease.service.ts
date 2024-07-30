@@ -2,9 +2,11 @@ import Disease, { IDisease } from "../model/diasease.model";
 import {GetQueryForPagination} from './GetQueryForPagination'
 
 //before updating
+/*
 export const getAllDiseases = async (): Promise<IDisease[]> => {
   return Disease.find().exec();
 };
+*/
 
 //------------------------------------------------------------------------------------------------
 
@@ -28,8 +30,9 @@ export const getAllDiseasesWithPagination = async (
 
   const [data, total] = await Promise.all([
     Disease.find(searchQuery)
-    .sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here  
-      .skip((page - 1) * limit)
+    //.sort(sortQuery as { [key: string]: 1 | -1 }) // Type assertion here
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
       .limit(limit)
       .populate('medicines')
       .exec(),
@@ -57,7 +60,12 @@ export const updateDisease = async (
 ): Promise<IDisease> => {
   console.log("disease :", disease);
   const newDisease = <IDisease>(
-    await Disease.findByIdAndUpdate(diseaseId, disease, { new: true })
+    await Disease.findByIdAndUpdate(diseaseId,
+        {
+          ...disease,
+          updatedAt: new Date(),
+        }
+          , { new: true })
   );
 
   return newDisease;
