@@ -28,23 +28,11 @@ import emrImageRouter from './routes/emr.images.route';
 import emrRouter from './routes/emr.route';
 import userRouter from './routes/user.route';//This may be doctors
 
-
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/error.controller';
 import HttpLoggerMiddleware from './middleware/http.logger.middleware';
 
-
-
-// Load the .env file
-//dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-
-
 const app = express();
-
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
 
 // Configure CORS
 /*const corsOptions = {
@@ -88,7 +76,6 @@ app.use(cookieParser());
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
-
 // Prevent parameter pollution
 app.use(
     hpp({
@@ -103,12 +90,6 @@ app.use(
     })
 );
 
-// Test middleware
-/* app.use((req: Request, res: Response, next: NextFunction) => {
-    req.requestTime = new Date().toISOString();
-    next();
-});
- */
 app.use(HttpLoggerMiddleware);
 
 // Database connection
@@ -117,10 +98,7 @@ mongoose
     .then(() => console.log('MongoDB connected!'))
     .catch((err) => console.log(err));
 
-
-
-
-// Ensure upload directory exists
+    // Ensure upload directory exists
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -137,22 +115,6 @@ const storage = multer.diskStorage({
         cb(null, imageFileName);
     },
 });
-
-/* 
-const multerFilter: multer.FileFilterCallback = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    // Implement your file filter logic here
-    if (file.mimetype.startsWith('image')) {
-      cb(null, true); // Accept the file
-    } else {
-      cb(new Error('Only images are allowed!'), false); // Reject the file
-    }
-  };
- */
-
-
-
-// Initialize multer with your configuration
-//const upload = multer({ storage: storage, fileFilter: multerFilter });
 
 const upload = multer({ storage }).any();
 
@@ -180,7 +142,6 @@ app.use('/api/doctors', doctorRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/emrImages', emrImageRouter);
 app.use('/api/emrs', emrRouter);
-
 app.use("/api/users", userRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {

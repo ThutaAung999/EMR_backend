@@ -3,10 +3,10 @@
 import app from '../app';
 import debug from 'debug';
 import http from 'http';
-import {Logger} from '../utils/logger'
+//import {Logger} from '../utils/logger'
 const serverDebug = debug('backend:server');
 
-const logger = new Logger();
+//const logger = new Logger();
 const port = normalizePort(process.env.PORT || '9999');
 app.set('port', port);
 
