@@ -3,7 +3,7 @@ import patientRouter from "./patients.route";
 import medicineRouter from "./medicines.route";
 import diseaseRouter from "./diseases.route";
 import doctorRouter from "./doctors.route";
-import tagRouter from "./tag.route";
+import tagRouter from "./tags.route";
 import emrImageRouter from "./emr.images.route";
 import emrRouter from "./emr.route";
 

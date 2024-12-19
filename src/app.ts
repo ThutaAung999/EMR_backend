@@ -43,8 +43,8 @@ import HttpLoggerMiddleware from './middleware/http.logger.middleware';
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
 // Configure CORS
 /*const corsOptions = {
