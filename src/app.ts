@@ -3,16 +3,16 @@ dotenv.config();
 
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
-import createError from 'http-errors';
+//import createError from 'http-errors';
 import helmet from 'helmet';
 import logger from 'morgan';
 import mongoose from 'mongoose';
-import multer from 'multer';
+//import multer from 'multer';
 
 import cors from 'cors';
-import fs from 'fs';
+//import fs from 'fs';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
+//import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 
 import hpp from 'hpp';
@@ -27,6 +27,8 @@ import tagRouter from './routes/tags.route';
 import emrImageRouter from './routes/emr.images.route';
 import emrRouter from './routes/emr.route';
 import userRouter from './routes/user.route'; //This may be doctors
+
+import emrImageUploadRouter from './routes/emrImagesUpload.route';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/error.controller';
@@ -98,7 +100,7 @@ mongoose
   .then(() => console.log('MongoDB connected!'))
   .catch((err) => console.log(err));
 
-// Ensure upload directory exists
+/* // Ensure upload directory exists
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -133,7 +135,7 @@ app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
     });
   }
 });
-
+ */
 // Routes
 app.use('/api/patients', patientRouter);
 app.use('/api/medicines', medicineRouter);
@@ -141,6 +143,7 @@ app.use('/api/diseases', diseaseRouter);
 app.use('/api/doctors', doctorRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/emrImages', emrImageRouter);
+app.use('/api/emrs/uploads', emrImageUploadRouter);
 app.use('/api/emrs', emrRouter);
 app.use('/api/users', userRouter);
 
