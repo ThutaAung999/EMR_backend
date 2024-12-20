@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config()
+dotenv.config();
 
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
@@ -26,25 +26,13 @@ import doctorRouter from './routes/doctors.route';
 import tagRouter from './routes/tags.route';
 import emrImageRouter from './routes/emr.images.route';
 import emrRouter from './routes/emr.route';
-import userRouter from './routes/user.route';//This may be doctors
-
+import userRouter from './routes/user.route'; //This may be doctors
 
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/error.controller';
 import HttpLoggerMiddleware from './middleware/http.logger.middleware';
 
-
-
-// Load the .env file
-//dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-
-
 const app = express();
-
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
 
 // Configure CORS
 /*const corsOptions = {
@@ -54,21 +42,21 @@ const app = express();
 };
 app.use(cors(corsOptions));
 */
-app.use(cors()); 
+app.use(cors());
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Set security HTTP headers
 app.use(
-    helmet({
-        crossOriginResourcePolicy: false,
-    })
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
 );
 
 // Development Logging
 if (process.env.NODE_ENV === 'development') {
-    app.use(logger('dev'));
+  app.use(logger('dev'));
 }
 
 // Limit requests from same API
@@ -88,88 +76,62 @@ app.use(cookieParser());
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
-
 // Prevent parameter pollution
 app.use(
-    hpp({
-        whitelist: [
-            'duration',
-            'ratingsQuantity',
-            'ratingsAverage',
-            'maxGroupSize',
-            'difficulty',
-            'price',
-        ],
-    })
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  }),
 );
 
-// Test middleware
-/* app.use((req: Request, res: Response, next: NextFunction) => {
-    req.requestTime = new Date().toISOString();
-    next();
-});
- */
 app.use(HttpLoggerMiddleware);
 
 // Database connection
 mongoose
-    .connect(config.db)
-    .then(() => console.log('MongoDB connected!'))
-    .catch((err) => console.log(err));
-
-
-
+  .connect(config.db)
+  .then(() => console.log('MongoDB connected!'))
+  .catch((err) => console.log(err));
 
 // Ensure upload directory exists
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-        let date = new Date();
-        let imageFileName = date.getTime() + '_' + file.originalname;
-        cb(null, imageFileName);
-    },
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    let date = new Date();
+    let imageFileName = date.getTime() + '_' + file.originalname;
+    cb(null, imageFileName);
+  },
 });
-
-/* 
-const multerFilter: multer.FileFilterCallback = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    // Implement your file filter logic here
-    if (file.mimetype.startsWith('image')) {
-      cb(null, true); // Accept the file
-    } else {
-      cb(new Error('Only images are allowed!'), false); // Reject the file
-    }
-  };
- */
-
-
-
-// Initialize multer with your configuration
-//const upload = multer({ storage: storage, fileFilter: multerFilter });
 
 const upload = multer({ storage }).any();
 
 // Route to handle file uploads
 app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
-    if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-        return res.status(400).json({ msg: 'No file selected!' });
-    } else {
-        const uploadedFiles = (req.files as Express.Multer.File[]).map((file) => ({
-            image: `uploads/${file.filename}`,
-        }));
+  if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+    return res.status(400).json({ msg: 'No file selected!' });
+  } else {
+    const uploadedFiles = (req.files as Express.Multer.File[]).map((file) => ({
+      image: `uploads/${file.filename}`,
+    }));
 
-        return res.status(200).json({
-            msg: 'Files uploaded!',
-            images: uploadedFiles,
-        });
-    }
+    return res.status(200).json({
+      msg: 'Files uploaded!',
+      images: uploadedFiles,
+    });
+  }
 });
 
 // Routes
@@ -180,11 +142,10 @@ app.use('/api/doctors', doctorRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/emrImages', emrImageRouter);
 app.use('/api/emrs', emrRouter);
-
-app.use("/api/users", userRouter);
+app.use('/api/users', userRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 // Global error handler

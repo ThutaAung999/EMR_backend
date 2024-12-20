@@ -1,16 +1,16 @@
 import * as factory from '../controllers/handlerFactory';
 
-import crypto from "crypto";
-import mongoose, { Document, Model, Query } from "mongoose";
-import validator from "validator";
-import bcrypt from "bcryptjs";
+import crypto from 'crypto';
+import mongoose, { Document, Model, Query } from 'mongoose';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
   _id: string;
   name: string;
   email: string;
   userImage?: string;
-  role: "user" | "guide" | "lead-guide" | "admin";
+  role: 'user' | 'guide' | 'lead-guide' | 'admin';
   password?: string;
   passwordConfirm?: string;
   passwordChangedAt?: Date;
@@ -19,7 +19,7 @@ export interface IUser extends Document {
   active: boolean;
   correctPassword(
     candidatePassword: string,
-    userPassword: string
+    userPassword: string,
   ): Promise<boolean>;
   changedPasswordAfter(JWTTimestamp: number): boolean;
   createPasswordResetToken(): string;
@@ -28,38 +28,38 @@ export interface IUser extends Document {
 const userSchema = new mongoose.Schema<IUser>({
   name: {
     type: String,
-    required: [true, "Please tell us your name!"],
+    required: [true, 'Please tell us your name!'],
   },
   email: {
     type: String,
-    required: [true, "Please provide your email"],
+    required: [true, 'Please provide your email'],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, "Please provide a valid email"],
+    validate: [validator.isEmail, 'Please provide a valid email'],
   },
   userImage: {
     type: String,
-    default: "default.jpg",
+    default: 'default.jpg',
   },
   role: {
     type: String,
-    enum: ["user", "guide", "lead-guide", "admin"],
-    default: "user",
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user',
   },
   password: {
     type: String,
-    required: [true, "Please provide a password"],
+    required: [true, 'Please provide a password'],
     minlength: 8,
     select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Please confirm your password"],
+    required: [true, 'Please confirm your password'],
     validate: {
       validator: function (this: IUser, el: string) {
         return el === this.password; // abc == abc
       },
-      message: "Passwords are not the same!",
+      message: 'Passwords are not the same!',
     },
   },
   passwordChangedAt: Date,
@@ -72,14 +72,14 @@ const userSchema = new mongoose.Schema<IUser>({
   },
 });
 
-userSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  // hash the password with cost of 12  
+userSchema.pre<IUser>('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  // hash the password with cost of 12
   if (this.password) {
-     this.password = await bcrypt.hash(this.password, 12);
+    this.password = await bcrypt.hash(this.password, 12);
   } else {
     // Handle the case where this.password is undefined or empty
-    throw new Error("Password is undefined or empty");
+    throw new Error('Password is undefined or empty');
   }
 
   // Delete passwordConfirm field
@@ -87,9 +87,8 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-
-userSchema.pre<IUser>("save", function (next) {
-  if (!this.isModified("password") || this.isNew) return next();
+userSchema.pre<IUser>('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = new Date(Date.now() - 1000);
   next();
@@ -103,18 +102,18 @@ userSchema.pre<Query<IUser, IUser>>(/^find/, function (next) {
 
 userSchema.methods.correctPassword = async function (
   candidatePassword: string,
-  userPassword: string
+  userPassword: string,
 ): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 userSchema.methods.changedPasswordAfter = function (
-  JWTTimestamp: number
+  JWTTimestamp: number,
 ): boolean {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       (this.passwordChangedAt.getTime() / 1000).toString(),
-      10
+      10,
     );
     return JWTTimestamp < changedTimestamp;
   }
@@ -124,22 +123,20 @@ userSchema.methods.changedPasswordAfter = function (
 };
 
 userSchema.methods.createPasswordResetToken = function (): string {
-  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetToken = crypto.randomBytes(32).toString('hex');
 
   this.passwordResetToken = crypto
-    .createHash("sha256")
+    .createHash('sha256')
     .update(resetToken)
-    .digest("hex");
+    .digest('hex');
 
   this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
 
   return resetToken;
 };
 
-const User: Model<IUser> = mongoose.model<IUser>("Users", userSchema);
+const User: Model<IUser> = mongoose.model<IUser>('Users', userSchema);
 
 //export const getUser = factory.getOne(User as unknown as Model<Document>);
-
-
 
 export default User;

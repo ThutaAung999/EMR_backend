@@ -2,11 +2,11 @@ import express from 'express';
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface ITag extends Document {
-    name: string;
+  name: string;
 }
 
 const TagSchema: Schema = new Schema({
-    name: { type: String, required: true }
+  name: { type: String, required: true },
 });
 
 const TagService: Model<ITag> = mongoose.model<ITag>('Tags', TagSchema);

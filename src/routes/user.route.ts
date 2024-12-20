@@ -19,18 +19,25 @@ router.patch('/updateMyPassword', authController.updatePassword);
 
 // Routes related to current user
 router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateMe', userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateMe);
+router.patch(
+  '/updateMe',
+  userController.uploadUserPhoto,
+  userController.resizeUserPhoto,
+  userController.updateMe,
+);
 router.delete('/deleteMe', userController.deleteMe);
 
 // Routes restricted to admin
 router.use(authController.restrictTo('admin'));
 
 // Admin routes for user management
-router.route('/')
+router
+  .route('/')
   .get(userController.getAllUsers)
   .post(userController.createUser);
 
-router.route('/:id')
+router
+  .route('/:id')
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);

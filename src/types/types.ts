@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-
 export interface IRequest extends Request {
-// user?: User;    
+  // user?: User;
 }
 
-export interface IResponse extends Response {
-    
-}
+export interface IResponse extends Response {}

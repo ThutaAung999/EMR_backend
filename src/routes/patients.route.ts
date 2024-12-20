@@ -1,44 +1,44 @@
-import express, { Router } from "express";
+import express, { Router } from 'express';
 
 //for protecting routes
-import * as Auth from "../controllers/authController";
+import * as Auth from '../controllers/authController';
 
 import {
   deletePatient,
   findPatientByName,
-//  getAllPatients,
+  //  getAllPatients,
   //getAllPatientsWithPagination,
   getAllPatientsWithPaginationHandler,
   getPatientById,
   newPatient,
   updatePatient,
-} from "../controllers/patient.controller";
+} from '../controllers/patient.controller';
 
-import { validateZodSchema } from "../middleware/validator.middleware";
+import { validateZodSchema } from '../middleware/validator.middleware';
 
 import {
   zodPatientSchema,
   zodPatientUpdateSchema,
-} from "../schema/patient.schema";
+} from '../schema/patient.schema';
 
 const router: Router = express.Router();
 
 //router.get('/', getAllPatients);
 
 //router.get('/',getAllPatientsWithPagination)
-router.get('/',getAllPatientsWithPaginationHandler)
+router.get('/', getAllPatientsWithPaginationHandler);
 /* router.route("/").
     get(Auth.protect, getAllPatients);
  */
 
-router.get("/:patientId", getPatientById);
-router.get("/name/:name", findPatientByName); //return empty array  ( [] ) ,  why?
-router.post("/", validateZodSchema(zodPatientSchema), newPatient);
+router.get('/:patientId', getPatientById);
+router.get('/name/:name', findPatientByName); //return empty array  ( [] ) ,  why?
+router.post('/', validateZodSchema(zodPatientSchema), newPatient);
 router.patch(
-  "/:patientId",
+  '/:patientId',
   validateZodSchema(zodPatientUpdateSchema),
-  updatePatient
+  updatePatient,
 );
-router.delete("/:patientId", deletePatient);
+router.delete('/:patientId', deletePatient);
 
 export default router;

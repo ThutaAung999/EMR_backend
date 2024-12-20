@@ -6,7 +6,7 @@ type Query<F extends Record<string, unknown>> = {
 type Callback<
   F extends Record<string, unknown>,
   R extends Record<string, unknown>,
-> = (filter: Omit<Query<F>, "page" | "limit">) => R;
+> = (filter: Omit<Query<F>, 'page' | 'limit'>) => R;
 
 export const withPagination = <
   F extends Record<string, unknown>,
