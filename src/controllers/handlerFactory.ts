@@ -1,20 +1,20 @@
-import { Request, Response, NextFunction } from "express";
-import { Model, Document } from "mongoose";
-import catchAsync from "../utils/catch-async";
-import AppError from "../utils/appError";
-import APIFeatures from "../utils/apiFeatures";
-import User from "../model/user.model";
+import { Request, Response, NextFunction } from 'express';
+import { Model, Document } from 'mongoose';
+import catchAsync from '../utils/catch-async';
+import AppError from '../utils/appError';
+import APIFeatures from '../utils/apiFeatures';
+import User from '../model/user.model';
 
 export const deleteOne = <T extends Document>(Model: Model<T>) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      return next(new AppError('No document found with that ID', 404));
     }
 
     res.status(204).json({
-      status: "success",
+      status: 'success',
       data: null,
     });
   });
@@ -27,11 +27,11 @@ export const updateOne = <T extends Document>(Model: Model<T>) =>
     });
 
     if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      return next(new AppError('No document found with that ID', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         data: doc,
       },
@@ -43,7 +43,7 @@ export const createOne = <T extends Document>(Model: Model<T>) =>
     const doc = await Model.create(req.body);
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: {
         data: doc,
       },
@@ -52,7 +52,7 @@ export const createOne = <T extends Document>(Model: Model<T>) =>
 
 export const getOne = <T extends Document>(
   Model: Model<T>,
-  popOptions?: string
+  popOptions?: string,
 ) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let query = Model.findById(req.params.id);
@@ -60,11 +60,11 @@ export const getOne = <T extends Document>(
     const doc = await query;
 
     if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      return next(new AppError('No document found with that ID', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         data: doc,
       },
@@ -91,10 +91,10 @@ export const getAll = <T extends Document>(Model: Model<T>) =>
       },
     }); */
     const users = await User.find();
-    console.log("users",users)
+    console.log('users', users);
     // SEND RESPONSE
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: users.length,
       data: {
         users,

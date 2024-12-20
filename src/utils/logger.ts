@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import winston from "winston";
-import dayjs from "dayjs";
-import { LOG_LEVEL } from "../config/env";
+import winston from 'winston';
+import dayjs from 'dayjs';
+import { LOG_LEVEL } from '../config/env';
 
 const { combine, timestamp, printf } = winston.format;
 
-export const createWinstonLogger = (context = "APP") => {
+export const createWinstonLogger = (context = 'APP') => {
   const printFormat = printf(
     ({ level, message, timestamp, context, ...meta }) => {
       return `${timestamp} ${level.toUpperCase()} [${context}]: ${message} ${
-        typeof meta === "object" ? JSON.stringify(meta, null, 2) : meta
+        typeof meta === 'object' ? JSON.stringify(meta, null, 2) : meta
       }`;
     },
   );
@@ -34,7 +34,7 @@ export class Logger {
   private context?: string;
   private logger = winstonLogger;
 
-  constructor(context = "APP") {
+  constructor(context = 'APP') {
     this.context = context;
   }
 
@@ -45,8 +45,8 @@ export class Logger {
   public log(message: any, context?: string): any {
     context = context || this.context;
 
-    if (!!message && "object" === typeof message) {
-      const { message: msg, level = "info", ...meta } = message;
+    if (!!message && 'object' === typeof message) {
+      const { message: msg, level = 'info', ...meta } = message;
 
       return this.logger.log(level, msg as string, { context, ...meta });
     }
@@ -55,14 +55,14 @@ export class Logger {
   }
 
   public info(message: any, context?: string): any {
-    console.log("info")
+    console.log('info');
     context = context || this.context;
 
-      return this.log(message, context);
+    return this.log(message, context);
   }
 
   public fatal(message: any, trace?: string, context?: string): any {
-    console.log("fatal")
+    console.log('fatal');
     context = context || this.context;
 
     if (message instanceof Error) {
@@ -70,7 +70,7 @@ export class Logger {
       const { message: msg, name, stack, ...meta } = message;
 
       return this.logger.log({
-        level: "fatal",
+        level: 'fatal',
         message: msg,
         context,
         stack: [trace || stack],
@@ -79,11 +79,11 @@ export class Logger {
       });
     }
 
-    if (!!message && "object" === typeof message) {
+    if (!!message && 'object' === typeof message) {
       const { message: msg, ...meta } = message;
 
       return this.logger.error({
-        level: "fatal",
+        level: 'fatal',
         message: msg,
         context,
         stack: [trace],
@@ -92,7 +92,7 @@ export class Logger {
     }
 
     return this.logger.error({
-      level: "fatal",
+      level: 'fatal',
       message,
       context,
       stack: [trace],
@@ -100,7 +100,7 @@ export class Logger {
   }
 
   public error(message: any, trace?: string, context?: string): any {
-    console.log("error")
+    console.log('error');
     context = context || this.context;
 
     if (message instanceof Error) {
@@ -115,7 +115,7 @@ export class Logger {
       });
     }
 
-    if (!!message && "object" === typeof message) {
+    if (!!message && 'object' === typeof message) {
       const { message: msg, ...meta } = message;
 
       return this.logger.error(msg as string, {
@@ -129,10 +129,10 @@ export class Logger {
   }
 
   public warn(message: any, context?: string): any {
-    console.log("warn")
+    console.log('warn');
     context = context || this.context;
 
-    if (!!message && "object" === typeof message) {
+    if (!!message && 'object' === typeof message) {
       const { message: msg, ...meta } = message;
 
       return this.logger.warn(msg as string, { context, ...meta });
@@ -142,10 +142,10 @@ export class Logger {
   }
 
   public debug(message: any, context?: string): any {
-    console.log("debug")
+    console.log('debug');
     context = context || this.context;
 
-    if (!!message && "object" === typeof message) {
+    if (!!message && 'object' === typeof message) {
       const { message: msg, ...meta } = message;
 
       return this.logger.debug(msg as string, { context, ...meta });
@@ -155,10 +155,10 @@ export class Logger {
   }
 
   public verbose(message: any, context?: string): any {
-    console.log("verbose")
+    console.log('verbose');
     context = context || this.context;
 
-    if (!!message && "object" === typeof message) {
+    if (!!message && 'object' === typeof message) {
       const { message: msg, ...meta } = message;
 
       return this.logger.verbose(msg as string, { context, ...meta });

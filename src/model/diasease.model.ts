@@ -1,31 +1,35 @@
-        import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IDisease extends Document {
-    _id: mongoose.Types.ObjectId;
-    name: string;
-    description?: string;
-    patients: mongoose.Types.ObjectId[];
-    medicines: mongoose.Types.ObjectId[];
-    createdAt: Date;
-    updatedAt: Date;
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  description?: string;
+  patients: mongoose.Types.ObjectId[];
+  medicines: mongoose.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const diseaseSchema: Schema<IDisease> = new Schema({
+const diseaseSchema: Schema<IDisease> = new Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     description: {
-        type: String
+      type: String,
     },
     patients: [{ type: Schema.Types.ObjectId, ref: 'Patients' }],
-    medicines: [{ type: Schema.Types.ObjectId, ref: 'Medicines' }]
-},
-    {
-        timestamps: true
-    }
+    medicines: [{ type: Schema.Types.ObjectId, ref: 'Medicines' }],
+  },
+  {
+    timestamps: true,
+  },
 );
 
-const Disease: Model<IDisease> = mongoose.model<IDisease>('Diseases', diseaseSchema);
+const Disease: Model<IDisease> = mongoose.model<IDisease>(
+  'Diseases',
+  diseaseSchema,
+);
 
 export default Disease;

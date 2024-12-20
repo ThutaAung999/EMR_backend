@@ -13,36 +13,36 @@ export class HttpException extends Error {
 }
 
 export class BadRequestException extends HttpException {
-  constructor(message = "Bad Request", data?: any) {
+  constructor(message = 'Bad Request', data?: any) {
     super(message, 400, data);
   }
 }
 export class ExistenceConflictException extends HttpException {
-  constructor(message = "Already Exist", data?: any) {
+  constructor(message = 'Already Exist', data?: any) {
     super(message, 409, data);
   }
 }
 
 export class NotAuthenticatedException extends HttpException {
-  constructor(message = "Not Authenticated") {
+  constructor(message = 'Not Authenticated') {
     super(message, 401);
   }
 }
 
 export class ForbiddenException extends HttpException {
-  constructor(message = "Forbidden") {
+  constructor(message = 'Forbidden') {
     super(message, 403);
   }
 }
 
 export class NotFoundException extends HttpException {
-  constructor(message = "Not Found") {
+  constructor(message = 'Not Found') {
     super(message, 404);
   }
 }
 
 export class InternalServerErrorException extends HttpException {
-  constructor(message = "Internal Server Error") {
+  constructor(message = 'Internal Server Error') {
     super(message, 500);
   }
 }
