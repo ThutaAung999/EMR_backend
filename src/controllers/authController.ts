@@ -1,6 +1,9 @@
 import crypto from 'crypto';
 import jwt, { Secret } from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+//import { Request, Response, NextFunction } from 'express';
+
+import { IRequest, IResponse } from '../types/types';
+import { NextFunction } from 'express';
 import catchAsync from '../utils/catch-async';
 import User, { IUser } from '../model/user.model';
 import AppError from '../utils/appError';
@@ -22,7 +25,7 @@ const signToken = (id: string): string => {
 const createSendToken = (
   user: IUser,
   statusCode: number,
-  res: Response,
+  res: IResponse,
 ): void => {
   const token = signToken(user._id.toString());
 
@@ -59,9 +62,9 @@ const createSendToken = (
 };
 
 export const signup = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: IRequest, res: IResponse, next: NextFunction): Promise<void> => {
     try {
-      console.log('Request Body:', req.body); // Log the body
+      console.log('IRequest Body:', req.body); // Log the body
 
       // Validate the request body here if needed
       const userData = req.body;
@@ -93,7 +96,7 @@ export const signup = catchAsync(
 );
 
 export const login = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: IRequest, res: IResponse, next: NextFunction): Promise<void> => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -114,7 +117,7 @@ export const login = catchAsync(
   },
 );
 
-export const logout = (req: Request, res: Response): void => {
+export const logout = (req: IRequest, res: IResponse): void => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -123,7 +126,7 @@ export const logout = (req: Request, res: Response): void => {
 };
 
 export const protect = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: IRequest, res: IResponse, next: NextFunction): Promise<void> => {
     let token: string | undefined;
 
     console.log('req.headers.authorization :', req.headers.authorization);
@@ -183,8 +186,8 @@ export const protect = catchAsync(
 //---------------------------
 
 export const isLoggedIn = async (
-  req: Request,
-  res: Response,
+  req: IRequest,
+  res: IResponse,
   next: NextFunction,
 ): Promise<void> => {
   if (req.cookies.jwt) {
@@ -218,7 +221,7 @@ export const isLoggedIn = async (
 };
 
 export const restrictTo = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: IRequest, res: IResponse, next: NextFunction): void => {
     if (!roles.includes(req.user?.role!)) {
       return next(
         new AppError('You do not have permission to perform this action', 403),
@@ -229,7 +232,7 @@ export const restrictTo = (...roles: string[]) => {
 };
 
 export const forgotPassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: IRequest, res: IResponse, next: NextFunction): Promise<void> => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
@@ -266,7 +269,7 @@ export const forgotPassword = catchAsync(
 );
 
 export const resetPassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: IRequest, res: IResponse, next: NextFunction): Promise<void> => {
     const hashedToken = crypto
       .createHash('sha256')
       .update(req.params.token)
@@ -292,7 +295,7 @@ export const resetPassword = catchAsync(
 );
 
 export const updatePassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: IRequest, res: IResponse, next: NextFunction): Promise<void> => {
     const user = await User.findById(req.user?.id).select('+password');
 
     if (
