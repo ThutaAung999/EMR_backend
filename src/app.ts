@@ -56,6 +56,8 @@ app.use(
   }),
 );
 
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+``
 // Development Logging
 if (process.env.NODE_ENV === 'development') {
   app.use(logger('dev'));
@@ -137,6 +139,13 @@ app.post('/api/emrs/uploads', upload, (req: Request, res: Response) => {
 });
  */
 // Routes
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Welcome to the EMR Backend API!',
+  });
+});
+
 app.use('/api/patients', patientRouter);
 app.use('/api/medicines', medicineRouter);
 app.use('/api/diseases', diseaseRouter);
